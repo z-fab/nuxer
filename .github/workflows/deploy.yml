@@ -27,7 +27,7 @@ jobs:
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cd ${{ secrets.VPS_PROJECT_PATH }} && \
           git pull origin master && \
           cd docker && \
-          docker-compose down && \
-          docker-compose build && \
-          docker-compose up -d && \
+          docker compose down && \
+          docker compose build && \
+          docker compose up -d && \
           echo 'Deployment concluído com sucesso em $(date)' >> ../logs/deploy.log"
