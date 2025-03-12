@@ -2,8 +2,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    VERSION: str
-
     DATABASE_USER: str
     DATABASE_PASSWORD: str
     DATABASE_HOST: str
@@ -15,10 +13,7 @@ class Settings(BaseSettings):
 
     NOTION_TOKEN: str
 
-    OLLAMA_HOST: str
-
     ENV: str
-    LOGGING_NAME: str
 
     AUTH_SECRET_KEY: str
     AUTH_ALGORITHM: str
