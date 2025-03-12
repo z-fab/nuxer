@@ -19,20 +19,12 @@ def configure_jobs():
 
     # Job para sortear os animais
     scheduler.add_job(
-        FabzendaService().process_animal_lottery,
-        args=[],
-        id="lottery_animals",  # trigger="cron", hour=11, minute=0
-        trigger="interval",
-        minutes=2,
+        FabzendaService().process_animal_lottery, args=[], id="lottery_animals", trigger="cron", hour=11, minute=0
     )
 
-    # Job para sortear os animais
+    # Job para achar moedas
     scheduler.add_job(
-        FabzendaService().process_found_coin_for_animals,
-        args=[],
-        id="found_coin",
-        trigger="interval",
-        seconds=30,
+        FabzendaService().process_found_coin_for_animals, args=[], id="found_coin_1", trigger="interval", minutes=360
     )
 
 
