@@ -1,0 +1,44 @@
+x-service-base: &service-base
+  build:
+    context: ..  # Contexto é a pasta pai (raiz do projeto)
+    dockerfile: docker/python.Dockerfile
+  restart: unless-stopped
+  volumes:
+    - ../logs:/app/logs
+  environment:
+    - PYTHONUNBUFFERED=1
+    - DATABASE_HOST=host.docker.internal
+
+services:
+  api:
+    <<: *service-base
+    command: python main.py api
+    ports:
+      - "8000:8000"
+
+  schedule:
+    <<: *service-base
+    command: python main.py schedule
+
+  assistant:
+    <<: *service-base
+    command: python main.py assistant
+
+  # # Serviço Next.js
+  # frontend:
+  #   build:
+  #     context: ..  # Contexto é a pasta pai (raiz do projeto)
+  #     dockerfile: docker/nextjs.Dockerfile
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - NEXT_PUBLIC_API_URL=http://api:8000
+  #   depends_on:
+  #     - api
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
