@@ -8,12 +8,6 @@ class CONST_SLACK:
         "gazeta_uxer": "C07NAJ6C9UY",
     }
 
-    COMMANDS = {
-        "fb": "fabcoin-command",
-        "msg": "msg-command",
-        "survey": "survey-command",
-    }
-
     ID_CHANNEL_DEV = "C04N17V06DS"
     ID_USER_DEV = "U02AL3FMQR4"
     ID_USER_ADMIN = "U02AL3FMQR4"
