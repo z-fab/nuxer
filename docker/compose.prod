@@ -16,8 +16,6 @@ services:
   api:
     <<: *service-base
     command: python main.py api
-    ports:
-      - "8000:8000"
 
   schedule:
     <<: *service-base
