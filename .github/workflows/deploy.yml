@@ -1,32 +1,32 @@
 name: Deploy to VPS
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
-          
-      - name: Add host to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-          
-      - name: Deploy to VPS
-        run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cd ${{ secrets.VPS_PROJECT_PATH }} && \
-          git pull origin master && \
-          docker compose -f docker/compose.prod down && \
-          docker compose -f docker/compose.prod build && \
-          docker compose -f docker/compose.prod up -d && \
-          echo 'Deployment concluído com sucesso em $(date)' >> /logs/deploy.log"
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.7.0
+              with:
+                  ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+            - name: Add host to known_hosts
+              run: |
+                  mkdir -p ~/.ssh
+                  ssh-keyscan ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+            - name: Deploy to VPS
+              run: |
+                  ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cd ${{ secrets.VPS_PROJECT_PATH }} && \
+                  git pull origin master && \
+                  docker compose -f docker/compose.prod down && \
+                  docker compose -f docker/compose.prod build && \
+                  docker compose -f docker/compose.prod up -d && \
+                  echo 'Deployment concluído com sucesso em $(date)' >> logs/deploy.log"
