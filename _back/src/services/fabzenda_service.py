@@ -13,6 +13,7 @@ from models.fabzenda.entities.user_animal_entity import UserAnimalEntity
 from repositories import fabbank_repository as fbr
 from repositories import fabzenda_repository as fzr
 from repositories.configs_repository import get_config_by_name
+from services.fabbank_service import FabBankService
 from utils import fabzenda_utils as fabzenda_utils
 from utils import slack_utils as slack_utils
 
@@ -219,6 +220,8 @@ class FabzendaService:
             return False
 
     def process_animal_lottery(self):
+        fbs = FabBankService()
+
         # Função para calcular o prêmio do animal
         def calculate_prize(user_animal: UserAnimalEntity):
             prize = user_animal.animal_type.base_reward
@@ -238,7 +241,10 @@ class FabzendaService:
         def notificate_winner(wins: tuple[UserAnimalEntity, int]):
             total_prize = sum([win[1] for win in wins])
             total_prize = total_prize * 1.2 if len(wins) == 3 else total_prize
+            total_prize = round(total_prize)
             user = wins[0][0].user_entity
+
+            fbs.change_coins(user, total_prize, "Premiação - Jogo dos Fabichinhos")
 
             bonus_text = "Você ganhou 20% de bônus por ter 3 animais sorteados!" if len(wins) == 3 else ""
 
@@ -246,7 +252,11 @@ class FabzendaService:
                 apelido=user.apelido, reward=total_prize, bonus=bonus_text
             )
 
-            context.slack.send_dm(user.slack_id, text, "Resultado - Jogo do Fabichinhos")
+            context.slack.send_dm(user.slack_id, text, "Resultado - Jogo dos Fabichinhos")
+
+            logger.info(
+                f"Usuário {user.apelido} ganhou F₵ {total_prize} com {' '.join([win[0].animal_type.name for win in wins])}"
+            )
 
             return True
 
@@ -287,7 +297,7 @@ class FabzendaService:
 
         dict_winners = defaultdict(list)
         for winning_type in winning_types:
-            user_animals = fzr.fetch_all_user_animals_alive_by_type(winning_type.type_id)
+            user_animals: list[UserAnimalEntity] = fzr.fetch_all_user_animals_alive_by_type(winning_type.type_id)
 
             for animal in user_animals:
                 prize = calculate_prize(animal)
