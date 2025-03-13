@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from repositories import users_repository as ur
 from repositories import echo_repository as er
+from repositories import users_repository as ur
 from services.auth_service import admin_role
+from services.echo_service import EchoService
 from services.fabbank_service import FabBankService as fbs
 
 router = APIRouter(
@@ -11,9 +12,23 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.post("/echo_not_indexed")
+
+@router.post("/index_echo")
 async def index_echo(request: Request, user: dict = Depends(admin_role)):
-    print(er.get_echo_not_indexed())
+    body_json = await request.json()
+    echo_id = body_json.get("data", {}).get("id")
+
+    if not echo_id:
+        raise HTTPException(status_code=404, detail="Echo ID not found in request body")
+
+    echo_entity = er.fetch_echo_entity_by_id(echo_id)
+    ecs = EchoService(echo_entity)
+    ecs.index_echo()
+
+
+@router.post("/echo_not_indexed")
+async def get_not_indexed_echos(request: Request, user: dict = Depends(admin_role)):
+    print(er.fetch_echo_entities_not_indexed())
     return {"message": "Webhooks"}
 
 
