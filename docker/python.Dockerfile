@@ -1,6 +1,8 @@
 # Estágio de build
 FROM python:3.12-alpine AS builder
 
+ENV TZ="America/Sao_Paulo"
+
 # Instalar dependências de compilação necessárias
 RUN apk add --no-cache gcc musl-dev
 
