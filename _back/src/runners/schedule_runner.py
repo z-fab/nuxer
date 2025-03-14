@@ -1,10 +1,11 @@
 import time
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from pytz import timezone
 
 from services.fabzenda_service import FabzendaService
 
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(timezone=timezone("America/Sao_Paulo"))
 
 
 def configure_jobs():
