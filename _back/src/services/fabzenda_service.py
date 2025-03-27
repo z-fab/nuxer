@@ -1,6 +1,6 @@
 import random
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import floor
 
 from loguru import logger
@@ -191,8 +191,21 @@ class FabzendaService:
             for user_animal in all_users_animals:
                 last_fed = user_animal.last_fed
                 hunger_rate = user_animal.animal_type.hunger_rate
-                delta_fed = (datetime.now() - last_fed).total_seconds() / 3600
 
+                # Calculando o tempo decorrido excluindo finais de semana
+                current_time = datetime.now()
+                hours_elapsed = 0
+
+                # Iterando por cada hora desde o último alimentado
+                temp_time = last_fed
+                while temp_time < current_time:
+                    # Verificando se é final de semana (5=sábado, 6=domingo)
+                    if temp_time.weekday() < 5:  # Se não for final de semana
+                        hours_elapsed += 1
+
+                    temp_time += timedelta(hours=1)
+
+                delta_fed = hours_elapsed
                 slots_used = floor(delta_fed / hunger_rate)
 
                 # Atualizando os slots de fome
