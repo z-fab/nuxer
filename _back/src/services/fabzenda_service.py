@@ -226,6 +226,9 @@ class FabzendaService:
         def calculate_prize(user_animal: UserAnimalEntity):
             prize = user_animal.animal_type.base_reward
 
+            modifier_status = fzr.calculate_animal_stats_with_modifier(user_animal)
+            prize = modifier_status["reward"]
+
             if user_animal.health == 3:
                 prize = prize * 0.75
             elif user_animal.health == 2:
