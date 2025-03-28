@@ -2,10 +2,11 @@
 FROM python:3.12-alpine AS builder
 
 ENV TZ=America/Sao_Paulo
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Instalar dependências de compilação necessárias
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc musl-dev tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
 
 # Instalar uv
 RUN pip install --no-cache-dir uv
@@ -20,6 +21,9 @@ RUN uv pip install --system .
 
 # Imagem final
 FROM python:3.12-alpine
+RUN apk add --no-cache tzdata
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Copiar apenas os pacotes Python instalados do estágio de build
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
