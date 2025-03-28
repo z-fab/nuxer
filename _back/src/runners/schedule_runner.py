@@ -14,7 +14,7 @@ def configure_jobs():
         args=[],
         id="update_animals_status",
         trigger="interval",
-        minutes=10,
+        minutes=5,
     )
 
     # Job para sortear os animais

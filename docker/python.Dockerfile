@@ -1,7 +1,8 @@
 # Estágio de build
 FROM python:3.12-alpine AS builder
 
-ENV TZ="America/Sao_Paulo"
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Instalar dependências de compilação necessárias
 RUN apk add --no-cache gcc musl-dev
