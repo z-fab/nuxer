@@ -189,8 +189,9 @@ class FabzendaService:
         all_users_animals = fzr.fetch_all_user_animals_alive()
         try:
             for user_animal in all_users_animals:
+                modifier_status = fzr.calculate_animal_stats_with_modifier(user_animal)
                 last_fed = user_animal.last_fed
-                hunger_rate = user_animal.animal_type.hunger_rate
+                hunger_rate = modifier_status["hunger_rate"]
 
                 # Calculando o tempo decorrido excluindo finais de semana
                 current_time = datetime.now()
@@ -205,8 +206,7 @@ class FabzendaService:
 
                     temp_time += timedelta(hours=1)
 
-                delta_fed = hours_elapsed
-                slots_used = floor(delta_fed / hunger_rate)
+                slots_used = floor(hours_elapsed / hunger_rate)
 
                 # Atualizando os slots de fome
                 user_animal.food_slot = 0
