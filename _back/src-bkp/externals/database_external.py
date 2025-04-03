@@ -2,10 +2,9 @@ from collections.abc import Generator
 from contextlib import contextmanager
 
 import sqlalchemy
+from _back.src.shared.config.settings import SETTINGS as S
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
-
-from config.settings import SETTINGS as S
 
 
 class DatabaseExternal:

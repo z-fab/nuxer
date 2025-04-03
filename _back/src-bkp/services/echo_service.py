@@ -1,11 +1,11 @@
 import os
 
 import requests
+from _back.src.shared.config.settings import FILE_DIR, MODELS_DIR
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
-from config.settings import FILE_DIR, MODELS_DIR
 from externals.context import Context
 from models.entities.echo_entity import EchoEntity
 from repositories.echo_repository import index_echo_content_to_qdrant

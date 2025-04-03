@@ -3,6 +3,21 @@ import random
 import re
 
 
+def extract_command(text):
+    pattern = r"!(\w+)(?:\s+(.+))?"
+    search = re.search(pattern, text)
+    command = ""
+    params = []
+    if search:
+        command = search.group(1)
+        if search.group(2):
+            # Expressão regular melhorada para capturar todos os tipos de parâmetros
+            params = re.findall(r'([\'"“”][^\'"“”]*[\'"“”]|\S+)', search.group(2))
+            params = [param.strip('"') for param in params]
+
+    return command.lower(), params
+
+
 def text_to_blocks(text: str) -> list:
     blocks = []
     for line in text.splitlines():

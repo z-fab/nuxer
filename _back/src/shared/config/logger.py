@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from config.settings import SETTINGS
+from shared.config.settings import SETTINGS
 
 
 def setup_logger():

@@ -1,8 +1,8 @@
 import requests
+from _back.src.shared.config.settings import SETTINGS as S
 from loguru import logger
 
 from config.const import CONST_NOTION
-from config.settings import SETTINGS as S
 
 
 class NotionExternal:

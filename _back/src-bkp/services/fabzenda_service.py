@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from math import floor
 
+from _back.src.fabbank.services.fabbank_service import FabBankService
 from loguru import logger
 
 from config.const import CONST_ERROR, CONST_MESSAGE, CONST_SLACK
@@ -13,7 +14,6 @@ from models.fabzenda.entities.user_animal_entity import UserAnimalEntity
 from repositories import fabbank_repository as fbr
 from repositories import fabzenda_repository as fzr
 from repositories.configs_repository import get_config_by_name
-from services.fabbank_service import FabBankService
 from utils import fabzenda_utils as fabzenda_utils
 from utils import slack_utils as slack_utils
 

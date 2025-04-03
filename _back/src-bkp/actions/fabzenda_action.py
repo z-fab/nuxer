@@ -2,6 +2,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
+from _back.src.fabbank.services.fabbank_service import FabBankService
 from loguru import logger
 
 from actions.action import Action
@@ -17,7 +18,6 @@ from repositories.fabzenda_repository import (
     fetch_user_animals_alive,
 )
 from repositories.users_repository import get_users_by_slack_id
-from services.fabbank_service import FabBankService
 from services.fabzenda_service import FabzendaService
 from utils.slack_utils import get_random_saudacao
 

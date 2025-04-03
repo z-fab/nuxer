@@ -2,6 +2,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
+from _back.src.fabbank.services.fabbank_service import FabBankService
 from loguru import logger
 
 from actions.action import Action
@@ -15,7 +16,6 @@ from repositories.fabbank_repository import (
     get_wallet_by_user_id,
 )
 from repositories.users_repository import get_users_by_slack_id
-from services.fabbank_service import FabBankService
 
 context = Context()
 

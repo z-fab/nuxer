@@ -1,10 +1,10 @@
+from _back.src.fabbank.services.fabbank_service import FabBankService as fbs
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from repositories import echo_repository as er
 from repositories import users_repository as ur
 from services.auth_service import admin_role
 from services.echo_service import EchoService
-from services.fabbank_service import FabBankService as fbs
 
 router = APIRouter(
     prefix="/wh",

@@ -1,6 +1,5 @@
+from _back.src.shared.config.settings import SETTINGS as S
 from qdrant_client import QdrantClient
-
-from config.settings import SETTINGS as S
 
 
 class QdrantExternal:

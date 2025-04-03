@@ -1,13 +1,13 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
+from _back.src.shared.config.settings import SETTINGS as S
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import EmailStr
 
 from config.const import CONST_MESSAGE
-from config.settings import SETTINGS as S
 from externals.context import Context
 from models.entities.user_entity import UserEntity
 from repositories import users_repository as ur
