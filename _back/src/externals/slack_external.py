@@ -9,7 +9,7 @@ from config.settings import SETTINGS as settings
 from utils.slack_utils import text_to_blocks
 
 
-class SlackService:
+class SlackExternal:
     """
     A class to handle Slack messaging operations.
 

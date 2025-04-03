@@ -1,3 +1,6 @@
+from loguru import logger
+from qdrant_client.models import Distance, VectorParams
+
 from config.const import CONST_NOTION
 from externals.context import Context
 from models.entities.echo_entity import EchoEntity
@@ -58,32 +61,14 @@ def fetch_echo_entities_not_indexed() -> list[EchoEntity]:
     return [EchoMapper.notion_to_entity(page) for page in list_result]
 
 
-# def get_baygon_by_baygon_id(baygon_id: str) -> EchoEntity:
-#     list_result = context.notion.query_database(
-#         "baygon",
-#         body={
-#             "filter": {
-#                 "property": "ID",
-#                 "unique_id": {"equals": int(baygon_id.split("-")[1])},
-#             },
-#         },
-#     )
+def index_echo_content_to_qdrant(content: str, chunk_size=200):
+    client = context.qdrant.get_client()
+    collection_name = "echo"
 
-#     if list_result is not None:
-#         baygon_entity = EchoMapper.notion_to_entity(list_result[0])
-#         logger.debug(f"Page returned: {baygon_entity}")
-
-#     return baygon_entity
-
-
-# def set_baygon_status(page_id: str, status: str) -> bool:
-#     json_body = {}
-#     json_body["properties"] = {}
-#     json_body["properties"]["Status"] = {}
-#     json_body["properties"]["Status"]["status"] = {"name": status}
-
-#     baygon_updated = context.notion.update_page(page_id=page_id, json_body=json_body)
-#     if baygon_updated is not None:
-#         return EchoMapper.notion_to_entity(baygon_updated)
-
-#     return False
+    # Criação da coleção se não existir
+    if collection_name not in [c.name for c in client.get_collections().collections]:
+        client.recreate_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+        )
+        logger.info(f"Collection {collection_name} created")

@@ -1,6 +1,6 @@
 x-service-base: &service-base
   build:
-    context: ..  # Contexto é a pasta pai (raiz do projeto)
+    context: ..
     dockerfile: docker/python.Dockerfile
   restart: unless-stopped
   volumes:
@@ -24,6 +24,16 @@ services:
     <<: *service-base
     command: python main.py assistant
 
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    environment:
+      - QDRANT__SERVICE__API_KEY=4bffae8b6b80f51ed9ac9027f0a911dcc60be476fc62c214cf895ce87ca1d8a0
+    volumes:
+      - qdrant_data:/qdrant/storage
+
   # # Serviço Next.js
   # frontend:
   #   build:
@@ -42,3 +52,6 @@ services:
   #     interval: 30s
   #     timeout: 10s
   #     retries: 3
+
+volumes:
+  qdrant_data:

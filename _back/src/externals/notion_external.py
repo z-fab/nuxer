@@ -1,11 +1,11 @@
-from typing import Dict
 import requests
-from config.const import CONST_NOTION
-from config.settings import SETTINGS as S
 from loguru import logger
 
-class NotionService:
-    
+from config.const import CONST_NOTION
+from config.settings import SETTINGS as S
+
+
+class NotionExternal:
     # ===================== #
     #  BASES                #
     # ===================== #
@@ -22,9 +22,7 @@ class NotionService:
             "content-type": "application/json",
         }
 
-    def __request(
-        self, method: str, endpoint: str, body: Dict[str, None] = None
-    ) -> Dict[str, None]:
+    def __request(self, method: str, endpoint: str, body: dict[str, None] = None) -> dict[str, None]:
         """
         Realiza uma requisição HTTP para a API do Notion.
 
@@ -43,9 +41,7 @@ class NotionService:
         logger.debug(f"Requesting {url} with method {method} and body {body}")
 
         try:
-            response = requests.request(
-                method=method, url=url, headers=self.__headers, json=body
-            )
+            response = requests.request(method=method, url=url, headers=self.__headers, json=body)
 
             response.raise_for_status()
 
@@ -70,12 +66,8 @@ class NotionService:
         """
         result = []
 
-        notion_database_id = CONST_NOTION.NOTION_ID_DATABASE.get(
-            database_id, database_id
-        )
-        response = self.__request(
-            endpoint=f"/databases/{notion_database_id}/query", method="POST", body=body
-        )
+        notion_database_id = CONST_NOTION.NOTION_ID_DATABASE.get(database_id, database_id)
+        response = self.__request(endpoint=f"/databases/{notion_database_id}/query", method="POST", body=body)
 
         if response is None:
             return result
@@ -99,12 +91,10 @@ class NotionService:
         logger.debug(f"Page returned: {response}")
         return response
 
-    def update_page(self, page_id: str, json_body: Dict[str, None]):
+    def update_page(self, page_id: str, json_body: dict[str, None]):
         logger.debug(f"Updating page {page_id} with {json_body}")
 
-        response = self.__request(
-            endpoint=f"/pages/{page_id}", method="PATCH", body=json_body
-        )
+        response = self.__request(endpoint=f"/pages/{page_id}", method="PATCH", body=json_body)
 
         return response
 

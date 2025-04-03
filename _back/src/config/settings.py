@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,6 +25,10 @@ class Settings(BaseSettings):
     URL_FRONT: str
     URL_BACK: str
 
+    QDRANT_HOST: str
+    QDRANT_PORT: str
+    QDRANT_API_KEY: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -33,3 +39,7 @@ class Settings(BaseSettings):
 
 
 SETTINGS = Settings()
+
+ROOT_DIR = Path(__file__).parent.parent.parent
+FILE_DIR = ROOT_DIR / "files"
+MODELS_DIR = ROOT_DIR / "models"

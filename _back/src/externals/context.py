@@ -1,6 +1,7 @@
-from .database_external import Database_SQL
-from .notion_external import NotionService
-from .slack_external import SlackService
+from .database_external import DatabaseExternal
+from .notion_external import NotionExternal
+from .qdrant_external import QdrantExternal
+from .slack_external import SlackExternal
 
 
 class Context:
@@ -9,7 +10,8 @@ class Context:
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.notion = NotionService()
-            cls.__instance.db = Database_SQL()
-            cls.__instance.slack = SlackService()
+            cls.__instance.notion = NotionExternal()
+            cls.__instance.db = DatabaseExternal()
+            cls.__instance.slack = SlackExternal()
+            cls.__instance.qdrant = QdrantExternal()
         return cls.__instance
