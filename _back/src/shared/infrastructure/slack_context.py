@@ -167,3 +167,6 @@ class SlackContext:
         except Exception as e:
             logger.error(f"ERROR OPENING VIEW:\n{e}")
             return False
+
+
+slack = SlackContext()

@@ -1,13 +1,21 @@
-# from fabbank.use_cases.consultar_saldo import ConsultarSaldo
-from fabbank.command_router import handle_fabbank
+from loguru import logger
+
+from domains.fabbank.command_router import handle_fabbank
+from domains.fabzenda.command_router import handle_fabzenda
 from shared.dto.slack_command_input import SlackCommandInput
+from shared.dto.use_case_response import UseCaseResponse
 
 
 def handle_command(input_data: SlackCommandInput):
     input_data.set_status("Pensando...")
-
     match input_data.command:
         case "fabbank" | "fb":
-            handle_fabbank(input_data)
+            return handle_fabbank(input_data)
+        case "fabzenda" | "fz":
+            return handle_fabzenda(input_data)
         case _:
-            input_data.say("Comando não reconhecido.")
+            logger.debug(f"Comando não reconhecido: {input_data.command}")
+            return UseCaseResponse(
+                message="Desculpe, não entendi qual comando você quer usar :confused:",
+                success=False,
+            )

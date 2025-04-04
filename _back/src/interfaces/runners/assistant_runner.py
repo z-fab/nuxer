@@ -2,7 +2,9 @@ import re
 
 from loguru import logger
 from slack_bolt import Assistant, BoltContext, Say, SetSuggestedPrompts
+from slack_sdk import WebClient
 
+from interfaces.slack.action_handler import handle_action_event
 from interfaces.slack.message_handler import handle_message_event
 from shared.infrastructure.slack_context import SlackContext
 
@@ -12,8 +14,6 @@ from shared.infrastructure.slack_context import SlackContext
 # from services.message_service import MessageService
 # from services.view_slack_service import ViewSlackService
 from shared.utils.slack_utils import get_random_saudacao
-
-# context = Context()
 
 slack = SlackContext()
 
@@ -31,7 +31,7 @@ def messages(body, say, context: BoltContext):
 def messages(body, say, context: BoltContext):  # noqa: F811
     last_message = body.get("event", {}).get("text", "")
     last_message = re.sub(r"^\s*<@[^>]+>\s*", "", last_message)
-    print(body)
+
     try:
         return handle_message_event(context, body.get("event", {}))
 
@@ -40,16 +40,15 @@ def messages(body, say, context: BoltContext):  # noqa: F811
         say(":warning: Desculpe, algo deu errado nos meus bits e bytes :robot_face:")
 
 
-# @app_slack.action({"action_id": re.compile(r".*")})
-# def action_handler(body, ack, say, context: BoltContext, client: WebClient):
-#     ack()
-#     try:
-#         return ActionSlackService(body, context, client).run()
+@app_slack.action({"action_id": re.compile(r".*")})
+def action_handler(body, ack, say, context: BoltContext, client: WebClient):
+    ack()
+    try:
+        return handle_action_event(context, body.get("event", {}))
 
-#     except Exception as e:
-#         logger.exception(f"Failed to execute action: {e}")
-#         say(":warning: Desculpe, algo deu errado nos meus bits e bytes quando fui executar a ação :robot_face:")
-#         return False
+    except Exception as e:
+        logger.exception(f"Failed to respond to an inquiry: {e}")
+        say(":warning: Desculpe, algo deu errado nos meus bits e bytes :robot_face:")
 
 
 # @app_slack.view("")
@@ -77,8 +76,7 @@ def respond_in_assistant_thread(
     say: Say,
 ):
     try:
-        return handle_message_event(context, payload)
-
+        handle_message_event(context, payload)
     except Exception as e:
         logger.exception(f"Failed to respond to an inquiry: {e}")
         say(":warning: Desculpe, algo deu errado nos meus bits e bytes :robot_face:")
