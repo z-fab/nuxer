@@ -27,9 +27,10 @@ class UserORM(Base):
 
 def setup_relationships():
     from domains.fabbank.orm.wallet import WalletORM
+    from domains.fabzenda.orm.user_animal import UserAnimalORM
 
     UserORM.wallet = relationship(WalletORM, back_populates="user", uselist=False)
-    # animals = relationship("UserAnimal", back_populates="user", uselist=False)
+    UserORM.animals = relationship(UserAnimalORM, back_populates="user", uselist=False)
 
 
 setup_relationships()

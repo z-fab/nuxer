@@ -5,8 +5,8 @@ from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 
 
-def handle_fabbank(input_data: SlackCommandInput) -> UseCaseResponse:
-    input_data.set_status("Falando com FabBank...")
+def handle_fabbank(input_data: SlackCommandInput, set_status: callable) -> UseCaseResponse:
+    set_status("Falando com FabBank...")
 
     option = ""
     if len(input_data.args) > 0:

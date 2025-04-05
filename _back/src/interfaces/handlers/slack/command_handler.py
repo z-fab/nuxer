@@ -6,13 +6,13 @@ from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 
 
-def handle_command(input_data: SlackCommandInput):
-    input_data.set_status("Pensando...")
+def handle_command(input_data: SlackCommandInput, set_status: callable) -> UseCaseResponse:
+    set_status("Pensando...")
     match input_data.command:
         case "fabbank" | "fb":
-            return handle_fabbank(input_data)
+            return handle_fabbank(input_data, set_status)
         case "fabzenda" | "fz":
-            return handle_fabzenda(input_data)
+            return handle_fabzenda(input_data, set_status)
         case _:
             logger.debug(f"Comando não reconhecido: {input_data.command}")
             return UseCaseResponse(

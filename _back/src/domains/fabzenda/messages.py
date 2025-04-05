@@ -4,11 +4,11 @@ TEMPLATE_FABZENDA_OPTIONS = """
 .
 --
 .
-Veja seus fabichinhos na sua Fabzenda || <🏕️ Ver Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+Veja seus fabichinhos na sua Fabzenda || <🏕️ Ver Fabzenda(fabzenda)[opt=ver]P>
 .
 --
 .
-Adote um novo fabichinho || <🌾 Celeiro Canto Bão(fabzenda)[opt=btn_celeiro]>
+Adote um novo fabichinho || <🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro]>
 .
 --
 """

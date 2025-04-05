@@ -4,8 +4,8 @@ from loguru import logger
 from slack_bolt import Assistant, BoltContext, Say, SetSuggestedPrompts
 from slack_sdk import WebClient
 
-from interfaces.slack.action_handler import handle_action_event
-from interfaces.slack.message_handler import handle_message_event
+from interfaces.handlers.slack.action_handler import handle_action_event
+from interfaces.handlers.slack.message_handler import handle_message_event
 from shared.infrastructure.slack_context import SlackContext
 
 # from slack_sdk import WebClient
@@ -44,7 +44,7 @@ def messages(body, say, context: BoltContext):  # noqa: F811
 def action_handler(body, ack, say, context: BoltContext, client: WebClient):
     ack()
     try:
-        return handle_action_event(context, body.get("event", {}))
+        return handle_action_event(body, client)
 
     except Exception as e:
         logger.exception(f"Failed to respond to an inquiry: {e}")
