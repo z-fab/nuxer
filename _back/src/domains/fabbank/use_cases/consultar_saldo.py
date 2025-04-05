@@ -16,14 +16,23 @@ class ConsultarSaldo:
             wallet_service = WalletService(WalletRepository(db))
             response = wallet_service.get_balance_info(self.input.user_id)
 
-            if response.data and response.data.get("wallet") is not None:
-                logger.info(
-                    f"Saldo consultado para {response.data['wallet'].user.nome}: {response.data['wallet'].balance} F₵"
+            if response.success:
+                if "total_balance" not in response.data:
+                    logger.info(
+                        f"Saldo consultado: {response.data['wallet'].user.nome} - {response.data['wallet'].balance} F₵"
+                    )
+                    return UseCaseResponse(
+                        success=True, data=response.data, notification=[{"presenter_hint": "fabbank.balance"}]
+                    )
+
+                # Se o usuário for admin, retorna o saldo total
+                logger.info(f"Saldo consultado para {self.input.user_id}: {response.data}")
+                return UseCaseResponse(
+                    success=True, data=response.data, notification=[{"presenter_hint": "fabbank.balance_admin"}]
                 )
-            else:
-                logger.info(f"Saldo consultado para {self.input.user_id}: {response.message}")
-            return response
+
+            return UseCaseResponse(success=False, notification=[{"presenter_hint": response.error}])
 
         except Exception as e:
             logger.error(f"Erro ao consultar o saldo para {self.input.user_id}: {e}")
-            return UseCaseResponse(success=False)
+            return UseCaseResponse(success=False, notification=[{"presenter_hint": "fabbank.error"}])

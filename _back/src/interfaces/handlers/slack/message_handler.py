@@ -6,8 +6,8 @@ from loguru import logger
 from slack_bolt import BoltContext
 
 from interfaces.handlers.slack.command_handler import handle_command
+from interfaces.presenters.message.presenter import SlackPresenter
 from shared.dto.slack_command_input import SlackCommandInput
-from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.slack_context import slack
 from shared.utils.slack_utils import extract_command, text_to_blocks
 
@@ -36,9 +36,14 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
     args = []
     text = payload.get("text", "")
 
+    say_fn = context.get("say")
+    set_status_fn = context.get("set_status")
+    type_message = payload.get("type")
+    ts = payload.get("ts")
+
     # Remove menções do texto se for app_mention
     if payload.get("type") == "app_mention":
-        text = re.sub(r"^\\s*<@[^>]+>\\s*", "", text)
+        text = re.sub(r"^\s*<@[^>]+>\s*", "", text)
 
     if text.startswith("!"):
         command, args = extract_command(text)
@@ -50,32 +55,32 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
             args=args,
         )
 
-        # Referência às funções do Slack
-        say_fn = context.get("say")
-        set_status_fn = context.get("set_status")
-        type_message = payload.get("type")
-        ts = payload.get("ts")
         composed_set_status = partial(set_status, set_status_fn, say_fn, type_message, ts)
 
         logger.info(f"Comando recebido de {input_data.user_id}: {command} | args: {args}")
-        use_case_response: UseCaseResponse = handle_command(input_data, composed_set_status)
+        use_case_response = handle_command(input_data, composed_set_status)
 
-        # Comunicação com o usuário
-        if use_case_response.success:
-            say(say_fn, use_case_response.message, ts=ts)
-            if use_case_response.data:
-                notify = use_case_response.data.get("notify")
-                if notify:
+        for notification in use_case_response.notification:
+            if notification.get("presenter_hint"):
+                presenter = SlackPresenter()
+                rendered_message = presenter.render(use_case_response, notification.get("presenter_hint"))
+
+                # Notifica o usuário
+                if not notification.get("user"):
+                    say(say_fn, rendered_message, ts=ts)
+                # Notifica o usuário específico
+                else:
+                    user_to_notify = notification.get("user")
                     logger.info(
-                        f"Notificando {notify['user'].nome} ({notify['user'].slack_id}) sobre: {notify['message']}"
+                        f"Notificando {user_to_notify.nome} ({user_to_notify.slack_id}) sobre: {rendered_message}"
                     )
-                    slack.send_dm(user=notify["user"].slack_id, text=notify["message"], alt_text=notify["message"])
-        else:
-            fallback = use_case_response.message or "Desculpe, algo deu errado nos meus bits e bytes :robot_face:"
-            say(say_fn, fallback, ts=ts)
+                    slack.send_dm(user=notification.get("user").slack_id, text=rendered_message)
+            else:
+                fallback = rendered_message or "Desculpe, algo deu errado nos meus bits e bytes :robot_face:"
+                say(say_fn, fallback, ts=ts)
 
     else:
         logger.debug(f"Mensagem recebida de {payload.get('user')}: {text}")
-        context.get("say")(text="Desculpe, algo deu errado nos meus bits e bytes :robot_face:")
+        say(say_fn, "Não entendi o que você disse :robot_face:", ts=ts)
 
     return True

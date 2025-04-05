@@ -17,10 +17,7 @@ class Transferir:
         try:
             parsed_args, args = self._parse_args()
             if not parsed_args:
-                return UseCaseResponse(
-                    message=args,
-                    success=False,
-                )
+                return UseCaseResponse(success=False, notification=[{"presenter_hint": "fabbank.wrong_param"}])
 
             # Executar a transferência
             transaction_service = TransactionService(TransactionRepository(db), WalletRepository(db))
@@ -32,15 +29,29 @@ class Transferir:
                 logger.info(
                     f"Transferência realizada de {self.input.user_id} para {args['to_slack_id']}: {args['value']} F₵ - {args['description']}"
                 )
-            else:
-                logger.info(
-                    f"Erro na transferência de {self.input.user_id} para {args['to_slack_id']}: {response.message}"
+                return UseCaseResponse(
+                    success=True,
+                    data=response.data,
+                    notification=[
+                        {"presenter_hint": "fabbank.transfer_success"},
+                        {"presenter_hint": "fabbank.transfer_notification", "user": response.data["wallet_to"].user},
+                    ],
                 )
-            return response
+
+            print(response)
+            return UseCaseResponse(
+                success=False,
+                data={},
+                notification=[{"presenter_hint": f"fabbank.{response.error}"}],
+            )
 
         except Exception as e:
             logger.error(f"Erro ao realizar a transferência: {e}")
-            return False
+            return UseCaseResponse(
+                success=False,
+                data=response.data,
+                notification=[{"presenter_hint": "fabbank.transfer_error"}],
+            )
 
     def _parse_args(self) -> dict | bool:
         # Verificar se os argumentos estão corretos
