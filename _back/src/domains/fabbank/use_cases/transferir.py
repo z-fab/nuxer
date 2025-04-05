@@ -38,7 +38,6 @@ class Transferir:
                     ],
                 )
 
-            print(response)
             return UseCaseResponse(
                 success=False,
                 data={},
