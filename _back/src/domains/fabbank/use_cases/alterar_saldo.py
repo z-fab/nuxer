@@ -1,9 +1,8 @@
 from loguru import logger
 
 from domains.fabbank import messages as MSG
-from domains.fabbank.repositories.transaction import TransactionRepository
-from domains.fabbank.repositories.wallet import WalletRepository
 from domains.fabbank.services.transaction import TransactionService
+from domains.user.repositories.user import UserRepository
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
@@ -17,12 +16,14 @@ class AlterarSaldo:
         try:
             parsed_args, args = self._parse_args()
             if not parsed_args:
-                return UseCaseResponse(success=False, notification=[{"presenter_hint": "fabbank.wrong_param"}])
+                return UseCaseResponse(success=False, notification=[{"presenter_hint": "fabbank.wrong_params"}])
 
-            transaction_service = TransactionService(TransactionRepository(db), WalletRepository(db))
-            response = transaction_service.change_coins(
-                self.input.user_id, args["to_slack_id"], args["value"], args["description"]
-            )
+            user_respository = UserRepository(db)
+            user = user_respository.get_user_by_slack_id(self.input.user_id)
+            user_to = user_respository.get_user_by_slack_id(args["to_slack_id"])
+
+            transaction_service = TransactionService(db)
+            response = transaction_service.change_coins(user.id, user_to.id, args["value"], args["description"])
 
             if response.success:
                 logger.info(

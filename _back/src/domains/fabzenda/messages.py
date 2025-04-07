@@ -17,7 +17,7 @@ TEMPLATE_FABZENDA_FAZENDA_VAZIA = """
 {apelido}, sua Fabzenda está vazio! :seedling:
 : Que tal adotar um fabichinho para cuidar?
 .
-<🌾 Celeiro Canto Bão(fabzenda)[opt=btn_celeiro]P>
+<🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro]P>
 """
 
 TEMPLATE_FABZENDA_FAZENDA = """
@@ -44,7 +44,7 @@ TEMPLATE_FABZENDA_FAZENDA_ANIMAL = """
 > *Modificador*: `{modifier}`
 : _{modifier_description}_
 
-<🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=btn_alimentar,id={id}]{primary}>
+<🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=alimentar,id={id}]{primary}>
 .
 """
 
@@ -94,7 +94,7 @@ A melhor, maior e único lugar que você pode comprar Fabichinhos para sua Fabze
 """
 
 TEMPLATE_FABZENDA_CELEIRO_ANIMAL = """
-{emoji} *{name}* `F₵ {price}` || <👀 Detalhes(fabzenda)[opt=btn_detalhes,id={id}]>
+{emoji} *{name}* `F₵ {price}` || <👀 Detalhes(fabzenda)[opt=detalhe_animal_celeiro,id={id}]>
 : {description}
 .
 --
@@ -109,7 +109,12 @@ TEMPLATE_FABZENDA_CELEIRO_ANIMAL_DETALHE = """
 > *Longevidade*: Vive por `{lifespan} dias`
 > *Prêmio*: Ao ser sorteada, seu tutor ganha `F₵ {reward}`
 .
-<🧺 Adotar(fabzenda)[opt=btn_comprar,id={id}]P> <🌾 Voltar para Celeiro(fabzenda)[opt=btn_celeiro]>
+<🧺 Adotar(fabzenda)[opt=comprar_animal,id={id}]P> <🌾 Voltar para Celeiro(fabzenda)[opt=celeiro]>
+"""
+
+TEMPLATE_FABZENDA_WALLET_NOT_FOUND = """
+Não consegui encontrar sua Wallet. Você precisa criar uma Wallet para usar a Fabzenda.
+: Para criar uma Wallet, fale com o Fabs.
 """
 
 TEMPLATE_FABZENDA_CELEIRO_ANIMAL_COMPRADO = """
@@ -148,95 +153,100 @@ TEMPLATE_FABZENDA_CELEIRO_ANIMAL_ERROR_INSUFFICIENT_BALANCE = """
 : Para verificar seu saldo, utilize o comando `!fb` `saldo`
 """
 
+TEMPLATE_FABZENDA_CELEIRO_ANIMAL_ERROR_UNAVAILABLE = """
+{apelido}, não foi possível adotar o Fabichinho. Ele não está disponível para adoção.
+: Para verificar os fabichinhos disponíveis, visite o Celeiro
+"""
+
 TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_SUCESSO = """
 {apelido}, você alimentou o seu Fabichinho com sucesso!
 : Ele está muito feliz e agradece a comida.
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_ERROR = """
 {apelido}, não foi possível alimentar o Fabichinho. Algo deu errado.
 : Tente novamente e avise o Fabs
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_DEAD = """
 {apelido}, não foi possível alimentar o Fabichinho. Ele já está morto.
 : Para adotar um novo fabichinho, visite o Celeiro
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_NOT_FOUND = """
 {apelido}, não foi possível alimentar o Fabichinho. Ele não foi encontrado na sua Fabzenda.
 : Para ver seus fabichinhos, vá até sua Fabzenda
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ALIMENTAR_INSUFFICIENT_BALANCE = """
 {apelido}, não foi possível alimentar o Fabichinho. Parece que você não tem saldo suficiente.
 : Para verificar seu saldo, utilize o comando `!fb` `saldo`
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_SUCESSO = """
 {apelido}, você enterrou o seu Fabichinho!
 : Que ele descanse em paz.
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_ERROR = """
 {apelido}, não foi possível enterrar o Fabichinho. Algo deu errado.
 : Tente novamente e avise o Fabs
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_LIVE = """
 {apelido}, não foi possível enterrar o Fabichinho. Ele ainda está vivo.
 : Para ver seus fabichinhos, vá até sua Fabzenda
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_NOT_FOUND = """
 {apelido}, não foi possível enterrar o Fabichinho. Ele não foi encontrado na sua Fabzenda.
 : Para ver seus fabichinhos, vá até sua Fabzenda
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_INSUFFICIENT_BALANCE = """
 {apelido}, não foi possível enterrar o Fabichinho. Parece que você não tem saldo suficiente.
 : Para verificar seu saldo, utilize o comando `!fb` `saldo`
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_SUCESSO = """
 {apelido}, você recebeu a recompensa por ter um fabichinho abduzido!
 : Agradeça aos seres de outro planeta.
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_ERROR = """
 {apelido}, não foi possível receber a recompensa. Algo deu errado.
 : Tente novamente e avise o Fabs
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_LIVE = """
 {apelido}, não foi possível receber a recompensa. Ele não foi abduzido.
 : Para ver seus fabichinhos, vá até sua Fabzenda
 .
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=btn_ver_fabzenda]P>
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
 TEMPLATE_FABZENDA_LOTTERY_WIN = """
@@ -270,4 +280,9 @@ TEMPLATE_FABZENDA_FOUND_COIN = """
 # Hey, encontrei algo [{emoji}]
 {apelido}, seu fabichinho *{name}* estava tão feliz que encontrou fabcoins no chão! :moneybag:
 > Acabei de adicionar `F₵ {coin_value}` na sua Wallet.
+"""
+
+TEMPLATE_FABZENDA_GENERIC_ERROR = """
+Algo deu errado e não consegui atuar na Fabzenda 🫠
+: Tente novamente e, se não der certo, entre em contato com o Fabs.
 """

@@ -1,94 +1,152 @@
 from datetime import datetime
 
-from domains.fabzenda import messages as MSG
+from domains.fabbank.services.wallet import WalletService
+from domains.fabzenda.entities.user_animal import UserAnimalEntity
+from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
+from domains.fabzenda.services.animal_modifier import AnimalModifierService
 from domains.user.repositories.user import UserRepository
-from shared.dto.use_case_response import UseCaseResponse
+from shared.dto.service_response import ServiceResponse
+from shared.infrastructure.db_context import DatabaseExternal
+from shared.utils import fabzenda_utils
 
 
 class UserAnimalService:
-    def __init__(self, user_animal_repo: UserAnimalRepository, user_repo: UserRepository):
-        self.user_repository: UserRepository = user_repo
-        self.user_animal_repository: UserAnimalRepository = user_animal_repo
+    def __init__(self, db_context: DatabaseExternal):
+        self.user_repository = UserRepository(db_context)
+        self.user_animal_repository = UserAnimalRepository(db_context)
+        self.animal_type_repository = AnimalTypeRepository(db_context)
 
-    def show_fabzenda(self, user_id: str) -> UseCaseResponse:
-        title_view = "Sua Fabzenda 🏕️"
+        self.wallet_service = WalletService(db_context)
+        self.animal_modifier_service = AnimalModifierService(db_context)
+
+    def get_user_animals(self, user_id: int) -> ServiceResponse:
         user = self.user_repository.get_user_by_id(user_id)
-
-        # Obter o animal do usuário
         user_animals = self.user_animal_repository.get_user_animals_alive_by_user_id(user_id)
 
         # Verificando se há animais na fabzenda
         if len(user_animals) <= 0:
-            message = MSG.TEMPLATE_FABZENDA_FAZENDA_VAZIA.format(apelido=user.apelido)
-            return UseCaseResponse(message=message, data={"animals": [], "title_view": title_view}, success=False)
+            return ServiceResponse(success=False, data={"apelido": user.apelido}, error="fazenda_vazia")
 
-        slots_fabzenda = [f"{animal.animal_type.emoji}" for animal in user_animals]
-
-        animals_text = ""
-        for animal in user_animals:
-            # Verificando se o animal está morto
-            if animal.health == 0:
-                animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_MORTO.format(
-                    emoji=animal.animal_type.emoji,
-                    burial_cost=animal.burial_cost,
-                    type=animal.animal_type.name,
-                    name=animal.name,
-                    health=animal.health_str,
-                    id=animal.animal_id,
-                )
-                continue
-
-            # Verificando se o animal foi Abduzido
-            if (animal.expiry_date < datetime.now()) or (animal.health == -1):
-                animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_EXPIRADO.format(
-                    emoji=animal.animal_type.emoji,
-                    expire_value=animal.expire_value,
-                    type=animal.animal_type.name,
-                    name=animal.name,
-                    id=animal.animal_id,
-                )
-                continue
-
-            food_slot_full = " `🍔` " * animal.food_slot
-            food_slot_empty = " `‧` " * (4 - animal.food_slot)
-            hunger = f"{food_slot_full}{food_slot_empty}"
-
-            age = (datetime.now() - animal.purchase_date).days
-
-            map_health_description = {
-                4: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_4,
-                3: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_3,
-                2: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_2,
-                1: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_1,
-            }
-            health_description = map_health_description.get(
-                animal.health, MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_4
-            )
-
-            animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL.format(
-                emoji=animal.animal_type.emoji,
-                type=animal.animal_type.name,
-                name=animal.name,
-                reward=animal.reward,
-                expire_value=animal.expire_value,
-                modifier=f"{animal.modifier.name} {animal.modifier.emoji}" if animal.modifier else "Normal 🌱",
-                modifier_description=animal.modifier.resume_modifier
-                if animal.modifier
-                else "Seu fabichinho é normal (mas continua especial)",
-                health=animal.health_str,
-                health_description=health_description,
-                hunger=hunger,
-                hunger_rate=animal.hunger_rate,
-                age=f"{age} dias" if age > 1 else f"{age} dia" if age == 1 else "Recém-nascido",
-                lifespan=animal.lifespan,
-                feeding_cost=animal.feeding_cost,
-                id=animal.animal_id,
-                primary="P" if (animal.food_slot == 0 or animal.health < 4) else "",
-            )
-
-        message = MSG.TEMPLATE_FABZENDA_FAZENDA.format(
-            apelido=user.apelido, slots=" ".join(slots_fabzenda), animals=animals_text
+        return ServiceResponse(
+            success=True,
+            data={
+                "user_animals": user_animals,
+                "user": user,
+            },
         )
 
-        return UseCaseResponse(message=message, data={"animals": user_animals, "title_view": title_view}, success=True)
+    def buy_animal(self, user_id: int, animal_type_id: int) -> ServiceResponse:
+        animal_type = self.animal_type_repository.get_animal_type_by_id(animal_type_id)
+
+        return self._buy_animal_entity(user_id=user_id, animal_type=animal_type)
+
+    def _buy_animal_entity(self, user_id: int, animal_type: UserAnimalEntity) -> ServiceResponse:
+        # Sorteando o modificador
+        animal_modifier = self.animal_modifier_service.get_random_modifier()
+        animal_modifier_id = animal_modifier.modifier_id if animal_modifier else None
+
+        # Adicionando o animal ao usuário
+        animal_name = fabzenda_utils.get_random_animal_names()
+        user_animal = self.user_animal_repository.create_user_animal(
+            user_id=user_id,
+            animal_type_id=animal_type.type_id,
+            lifespan=animal_type.lifespan,
+            nickname=animal_name,
+            id_modifier=animal_modifier_id,
+        )
+
+        if not user_animal:
+            return ServiceResponse(
+                success=False,
+                error="animal_not_created",
+            )
+
+        return ServiceResponse(
+            success=True,
+            data={
+                "user_animal": user_animal,
+                "animal_type": animal_type,
+                "animal_modifier": animal_modifier,
+            },
+        )
+
+    def can_buy_animal(self, user_id: int, animal_type_id: int) -> ServiceResponse:
+        animal_type = self.animal_type_repository.get_animal_type_by_id(animal_type_id)
+
+        return self._can_buy_animal_entity(user_id=user_id, animal_type=animal_type)
+
+    def _can_buy_animal_entity(self, user_id: int, animal_type: UserAnimalEntity) -> ServiceResponse:
+        max_animals = 3
+        user_animals = self.user_animal_repository.get_user_animals_alive_by_user_id(user_id)
+        wallet = self.wallet_service.get_balance_info(user_id).data["user_wallet"]
+
+        if len(user_animals) >= max_animals:
+            return ServiceResponse(
+                success=False,
+                error="max_animals_reached",
+            )
+
+        # Verificando se o usuário tem saldo suficiente
+        if int(wallet.balance) < animal_type.base_price:
+            return ServiceResponse(
+                success=False,
+                error="insufficient_balance",
+            )
+
+        # Verificando se o item está disponível
+        if not animal_type.available:
+            return ServiceResponse(
+                success=False,
+                error="animal_type_not_available",
+            )
+
+        return ServiceResponse(success=True, data={"user_animals": user_animals, "animal_type": animal_type})
+
+    def feed_animal(self, user_id: int, user_animal_id: int) -> ServiceResponse:
+        user_animal = self.user_animal_repository.get_user_animal_by_id(user_animal_id)
+
+        return self._feed_animal_entity(user_id=user_id, user_animal=user_animal)
+
+    def _feed_animal_entity(self, user_id: int, user_animal: UserAnimalEntity) -> ServiceResponse:
+        user_animal.food_slot = 4
+        user_animal.health = 4
+        user_animal.last_fed = datetime.now()
+
+        response = self.user_animal_repository.update_user_animal(user_animal)
+
+        if not response:
+            return ServiceResponse(
+                success=False,
+                error="animal_not_updated",
+            )
+
+        return ServiceResponse(
+            success=True,
+            data={
+                "user_animal": response,
+            },
+        )
+
+    def can_feed_animal(self, user_id: int, user_animal_id: int) -> ServiceResponse:
+        user_animal = self.user_animal_repository.get_user_animal_by_id(user_animal_id)
+        return self._can_feed_animal_entity(user_id=user_id, user_animal=user_animal)
+
+    def _can_feed_animal_entity(self, user_id: int, user_animal: UserAnimalEntity) -> ServiceResponse:
+        wallet = self.wallet_service.get_balance_info(user_id).data["user_wallet"]
+
+        # Verificando se o animal existe e está vivo
+        if not user_animal or not user_animal.is_alive or user_animal.health == 0:
+            return ServiceResponse(
+                success=False,
+                error="not_possible_to_feed_animal_dead",
+            )
+
+        # Verificando se o usuário tem saldo suficiente
+        if int(wallet.balance) < user_animal.feeding_cost:
+            return ServiceResponse(
+                success=False,
+                error="not_possible_to_feed_insufficient_balance",
+            )
+
+        return ServiceResponse(success=True, data={"user_animal": user_animal})

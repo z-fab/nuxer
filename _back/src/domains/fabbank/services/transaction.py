@@ -2,17 +2,18 @@ from domains.fabbank.entities.wallet import WalletEntity
 from domains.fabbank.repositories.transaction import TransactionRepository
 from domains.fabbank.repositories.wallet import WalletRepository
 from shared.dto.service_response import ServiceResponse
+from shared.infrastructure.db_context import DatabaseExternal
 
 
 class TransactionService:
-    def __init__(self, transaction_repo: TransactionRepository, wallet_repo: WalletRepository):
-        self.transaction_repository: TransactionRepository = transaction_repo
-        self.wallet_repository: WalletRepository = wallet_repo
+    def __init__(self, db_context: DatabaseExternal):
+        self.transaction_repository = TransactionRepository(db_context)
+        self.wallet_repository = WalletRepository(db_context)
 
-    def transfer_coins(self, from_slack_id: str, to_slack_id: str, value: int, description: str) -> ServiceResponse:
+    def transfer_coins(self, from_id: str, to_id: str, value: int, description: str) -> ServiceResponse:
         # Obter as wallets
-        wallet_from = self.wallet_repository.get_wallet_by_slack_id(from_slack_id)
-        wallet_to = self.wallet_repository.get_wallet_by_slack_id(to_slack_id)
+        wallet_from = self.wallet_repository.get_wallet_by_user_id(from_id)
+        wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
 
         # Validar as wallets
         if not wallet_from:
@@ -43,10 +44,10 @@ class TransactionService:
             data={"wallet_from": wallet_from, "wallet_to": wallet_to, "value": value, "description": description},
         )
 
-    def change_coins(self, from_slack_id: str, to_slack_id: str, value: int, description: str) -> ServiceResponse:
+    def change_coins(self, from_id: str, to_id: str, value: int, description: str) -> ServiceResponse:
         # Obter a wallet
-        wallet_from = self.wallet_repository.get_wallet_by_slack_id(from_slack_id)
-        wallet_to = self.wallet_repository.get_wallet_by_slack_id(to_slack_id)
+        wallet_from = self.wallet_repository.get_wallet_by_user_id(from_id)
+        wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
 
         # Validando acesso
         if not wallet_from or wallet_from.user.role > 0:

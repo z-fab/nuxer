@@ -15,7 +15,17 @@ class WalletRepository:
 
     def get_wallet_by_user_id(self, user_id: str) -> WalletEntity | None:
         with self._db_session() as session:
-            orm = session.query(WalletORM).filter(WalletORM.user_id == user_id).first()
+            orm = (
+                session.query(WalletORM)
+                .join(WalletORM.user)
+                .filter(UserORM.id == user_id)
+                .order_by(UserORM.id.desc())
+                .first()
+            )
+
+            if not orm:
+                return None
+
             return WalletEntity.model_validate(orm)
 
     def get_wallet_by_slack_id(self, slack_id: str) -> WalletEntity | None:

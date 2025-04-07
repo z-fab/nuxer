@@ -1,4 +1,3 @@
-from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
 from domains.user.repositories.user import UserRepository
 from shared.dto.slack_command_input import SlackCommandInput
@@ -16,9 +15,17 @@ class VerFabzenda:
         if not user_entity:
             return UseCaseResponse(success=False)
 
-        user_animal_repository = UserAnimalRepository(db)
-        user_animal_service = UserAnimalService(user_animal_repository, user_repository)
+        user_animal_service = UserAnimalService(db)
 
-        response = user_animal_service.show_fabzenda(user_entity.id)
+        response = user_animal_service.get_user_animals(user_entity.id)
+
+        if response.success:
+            return UseCaseResponse(
+                success=True,
+                data=response.data,
+                notification=[
+                    {"presenter_hint": "fabzenda.ver_fazenda"},
+                ],
+            )
 
         return response

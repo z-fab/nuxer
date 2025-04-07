@@ -1,11 +1,16 @@
-from interfaces.presenters.message.fabbank import FabbankSlackPresenter
+from loguru import logger
+
+from interfaces.presenters.slack.message.fabbank import FabbankSlackPresenter
+from interfaces.presenters.slack.message.fabzenda import FabzendaSlackPresenter
 from shared.dto.use_case_response import UseCaseResponse
 
 
-class SlackPresenter:
+class MessagePresenter:
     def __init__(self):
         self.fabbank = FabbankSlackPresenter()
+        self.fabzenda = FabzendaSlackPresenter()
         self._registry = {
+            ## Fabbank
             "fabbank.error": self.fabbank.generic_error,
             "fabbank.balance": self.fabbank.balance,
             "fabbank.balance_admin": self.fabbank.balance_admin,
@@ -16,10 +21,13 @@ class SlackPresenter:
             "fabbank.wrong_params": self.fabbank.wrong_params,
             "fabbank.transfer_error": self.fabbank.transfer_error,
             "fabbank.transfer_permission": self.fabbank.transfer_permission,
+            ## Fabzenda
+            "fabzenda.options": self.fabzenda.fabzenda_option,
         }
 
     def render(self, response: UseCaseResponse, presenter_hint: str) -> str:
         if presenter_hint in self._registry:
             return self._registry[presenter_hint](**response.data)
 
-        return response.message or "Mensagem não especificada"
+        logger.warning(f"Presenter hint '{presenter_hint}' não encontrado no registro.")
+        return response.message or "Não consegui entender o que você quis dizer."

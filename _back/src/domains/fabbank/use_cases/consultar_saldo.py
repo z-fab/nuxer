@@ -2,6 +2,7 @@ from loguru import logger
 
 from domains.fabbank.repositories.wallet import WalletRepository
 from domains.fabbank.services.wallet import WalletService
+from domains.user.repositories.user import UserRepository
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
@@ -13,13 +14,15 @@ class ConsultarSaldo:
 
     def __call__(self) -> UseCaseResponse:
         try:
+            user_repository = UserRepository(db)
+            user = user_repository.get_user_by_slack_id(self.input.user_id)
             wallet_service = WalletService(WalletRepository(db))
-            response = wallet_service.get_balance_info(self.input.user_id)
+            response = wallet_service.get_balance_info(user.id)
 
             if response.success:
                 if "total_balance" not in response.data:
                     logger.info(
-                        f"Saldo consultado: {response.data['wallet'].user.nome} - {response.data['wallet'].balance} F₵"
+                        f"Saldo consultado: {response.data['user_wallet'].user.nome} - {response.data['user_wallet'].balance} F₵"
                     )
                     return UseCaseResponse(
                         success=True, data=response.data, notification=[{"presenter_hint": "fabbank.balance"}]

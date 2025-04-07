@@ -1,4 +1,7 @@
-from domains.fabzenda import messages as MSG
+from domains.fabzenda.use_cases.alimentar_animal import AlimentarAnimal
+from domains.fabzenda.use_cases.comprar_animal import ComprarAnimal
+from domains.fabzenda.use_cases.detalhe_animal_celeiro import DetalheAnimalCeleiro
+from domains.fabzenda.use_cases.ver_celeiro import VerCeleiro
 from domains.fabzenda.use_cases.ver_fabzenda import VerFabzenda
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
@@ -14,5 +17,18 @@ def handle_fabzenda(input_data: SlackCommandInput, set_status: callable) -> UseC
     match option:
         case "ver":
             return VerFabzenda(input_data)()
+        case "celeiro":
+            return VerCeleiro(input_data)()
+        case "detalhe_animal_celeiro":
+            return DetalheAnimalCeleiro(input_data)()
+        case "comprar_animal":
+            return ComprarAnimal(input_data)()
+        case "alimentar":
+            return AlimentarAnimal(input_data)()
         case _:
-            return UseCaseResponse(message=MSG.TEMPLATE_FABZENDA_OPTIONS, success=True)
+            return UseCaseResponse(
+                success=True,
+                notification=[
+                    {"presenter_hint": "fabzenda.options"},
+                ],
+            )

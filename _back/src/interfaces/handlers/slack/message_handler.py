@@ -6,7 +6,7 @@ from loguru import logger
 from slack_bolt import BoltContext
 
 from interfaces.handlers.slack.command_handler import handle_command
-from interfaces.presenters.message.presenter import SlackPresenter
+from interfaces.presenters.slack.message.presenter import MessagePresenter
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.infrastructure.slack_context import slack
 from shared.utils.slack_utils import extract_command, text_to_blocks
@@ -60,25 +60,40 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
         logger.info(f"Comando recebido de {input_data.user_id}: {command} | args: {args}")
         use_case_response = handle_command(input_data, composed_set_status)
 
-        for notification in use_case_response.notification:
-            if notification.get("presenter_hint"):
-                presenter = SlackPresenter()
-                rendered_message = presenter.render(use_case_response, notification.get("presenter_hint"))
+        # Verifica se há notificações definidas
+        if use_case_response.notification:
+            # Para cada notificação, renderiza a mensagem
+            for notification in use_case_response.notification:
+                if notification.get("presenter_hint"):
+                    presenter = MessagePresenter()
+                    rendered_message = presenter.render(use_case_response, notification.get("presenter_hint"))
 
-                # Notifica o usuário
-                if not notification.get("user"):
-                    say(say_fn, rendered_message, ts=ts)
-                # Notifica o usuário específico
+                    # Notifica o usuário
+                    if not notification.get("user"):
+                        say(say_fn, rendered_message, ts=ts)
+                    # Notifica o usuário específico
+                    else:
+                        user_to_notify = notification.get("user")
+                        logger.info(
+                            f"Notificando {user_to_notify.nome} ({user_to_notify.slack_id}) sobre: {rendered_message}"
+                        )
+                        slack.send_dm(user=notification.get("user").slack_id, text=rendered_message)
                 else:
-                    user_to_notify = notification.get("user")
-                    logger.info(
-                        f"Notificando {user_to_notify.nome} ({user_to_notify.slack_id}) sobre: {rendered_message}"
+                    # Se não houver presenter_hint, renderiza a mensagem padrão
+                    message = (
+                        use_case_response.message
+                        or "Desculpe, algo deu errado nos meus bits e bytes e não sei o que responder :robot_face:"
                     )
-                    slack.send_dm(user=notification.get("user").slack_id, text=rendered_message)
-            else:
-                fallback = rendered_message or "Desculpe, algo deu errado nos meus bits e bytes :robot_face:"
-                say(say_fn, fallback, ts=ts)
+                    say(say_fn, message, ts=ts)
+        else:
+            # Se não houver notificações, renderiza a mensagem padrão
+            message = (
+                use_case_response.message
+                or "Desculpe, algo deu errado nos meus bits e bytes e não sei o que responder :robot_face:"
+            )
+            say(say_fn, message, ts=ts)
 
+    # Não é um comando, então apenas responde com uma mensagem padrão
     else:
         logger.debug(f"Mensagem recebida de {payload.get('user')}: {text}")
         say(say_fn, "Não entendi o que você disse :robot_face:", ts=ts)

@@ -8,22 +8,24 @@ class FabbankSlackPresenter:
     def __init__(self, now: datetime | None = None):
         self.now = now or datetime.now()
 
-    def balance(self, wallet: WalletEntity) -> str:
+    def balance(self, user_wallet: WalletEntity, **kwargs) -> str:
         return MSG.TEMPLATE_FABBANK_WALLET.format(
-            apelido=wallet.user.apelido,
-            balance=wallet.balance,
-            id_wallet=wallet.wallet_id,
+            apelido=user_wallet.user.apelido,
+            balance=user_wallet.balance,
+            id_wallet=user_wallet.wallet_id,
             data=self.now.strftime("%d/%m/%Y %H:%M:%S"),
         )
 
-    def balance_admin(self, wallets: list[WalletEntity], total_balance: int) -> str:
+    def balance_admin(self, wallets: list[WalletEntity], total_balance: int, **kwargs) -> str:
         balances_text = ""
         for w in wallets:
             balances_text += f"*{w.user.nome}*: `F₵ {w.balance}`\n"
 
         return MSG.TEMPLATE_FABBANK_WALLET_ADMIN.format(balance_total=total_balance, balances=balances_text)
 
-    def transfer_success(self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str) -> str:
+    def transfer_success(
+        self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str, **kwargs
+    ) -> str:
         return MSG.TEMPLATE_FABBANK_TRANSFER_SUCCESS.format(
             apelido=wallet_from.user.apelido,
             amount=value,
@@ -35,7 +37,7 @@ class FabbankSlackPresenter:
         )
 
     def transfer_notification(
-        self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str
+        self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str, **kwargs
     ) -> str:
         template = MSG.TEMPLATE_FABBANK_TRANSFER_RECEIVE if value > 0 else MSG.TEMPLATE_FABBANK_DISCOUNT_RECEIVE
 
