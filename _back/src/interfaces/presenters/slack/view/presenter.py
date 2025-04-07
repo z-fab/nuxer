@@ -1,5 +1,6 @@
 from loguru import logger
 
+from interfaces.presenters.hints import FabzendaHints
 from interfaces.presenters.slack.view.fabzenda import FabzendaSlackPresenter
 from shared.dto.use_case_response import UseCaseResponse
 
@@ -8,21 +9,33 @@ class ViewPresenter:
     def __init__(self):
         self.fabzenda = FabzendaSlackPresenter()
         self._registry = {
-            "fabzenda.fazenda_vazia": self.fabzenda.fazenda_vazia,
-            "fabzenda.ver_fazenda": self.fabzenda.fazenda_overview,
-            "fabzenda.ver_celeiro": self.fabzenda.celeiro_overview,
-            "fabzenda.wallet_not_found": self.fabzenda.wallet_not_found,
-            "fabzenda.detalhe_animal_celeiro": self.fabzenda.detalhe_animal_celeiro,
-            "fabzenda.max_animals_reached": self.fabzenda.max_animals_reached,
-            "fabzenda.insufficient_balance": self.fabzenda.insufficient_balance,
-            "fabzenda.transaction_error": self.fabzenda.transaction_error,
-            "fabzenda.comprar_animal": self.fabzenda.comprar_animal,
-            "fabzenda.alimentar_animal": self.fabzenda.alimentar_animal,
-            "fabzenda.animal_not_created": self.fabzenda.generic_error,
-            "fabzenda.animal_type_not_available": self.fabzenda.generic_error,
+            FabzendaHints.FAZENDA_OVERVIEW: self.fabzenda.fazenda_overview,
+            FabzendaHints.FAZENDA_OVERVIEW_VAZIA: self.fabzenda.fazenda_overview_vazia,
+            FabzendaHints.CELEIRO_OVERVIEW: self.fabzenda.celeiro_overview,
+            FabzendaHints.CELEIRO_DETALHE_ANIMAL: self.fabzenda.celeiro_detalhe_animal,
+            FabzendaHints.CELEIRO_MAX_ANIMALS_REACHED: self.fabzenda.celeiro_max_animals_reached,
+            FabzendaHints.CELEIRO_INSUFFICIENT_BALANCE: self.fabzenda.celeiro_insufficient_balance,
+            FabzendaHints.CELEIRO_ANIMAL_TYPE_NOT_AVAILABLE: self.fabzenda.celeiro_animal_type_not_available,
+            FabzendaHints.CELEIRO_TRANSACTION_ERROR: self.fabzenda.celeiro_transaction_error,
+            FabzendaHints.CELEIRO_CREATED_ERROR: self.fabzenda.celeiro_created_error,
+            FabzendaHints.CELEIRO_WALLET_NOT_FOUND: self.fabzenda.celeiro_wallet_not_found,
+            FabzendaHints.CELEIRO_ANIMAL_BUY_SUCCESS: self.fabzenda.celeiro_compra_animal,
+            ##
+            FabzendaHints.FEED_INSUFFICIENT_BALANCE: self.fabzenda.alimentar_insufficient_balance,
+            FabzendaHints.FEED_ANIMAL_DEAD: self.fabzenda.alimentar_animal_dead,
+            FabzendaHints.FEED_TRANSACTION_ERROR: self.fabzenda.alimentar_transaction_error,
+            FabzendaHints.FEED_ERROR: self.fabzenda.alimentar_error,
+            FabzendaHints.FEED_SUCCESS: self.fabzenda.alimentar_animal,
+            ##
+            FabzendaHints.BURIAL_INSUFFICIENT_BALANCE: self.fabzenda.enterrar_insufficient_balance,
+            FabzendaHints.BURIAL_ANIMAL_LIVES: self.fabzenda.enterrar_animal_lives,
+            FabzendaHints.BURIAL_TRANSACTION_ERROR: self.fabzenda.enterrar_transaction_error,
+            FabzendaHints.BURIAL_ERROR: self.fabzenda.enterrar_error,
+            FabzendaHints.BURIAL_SUCCESS: self.fabzenda.enterrar_animal,
+            ##
         }
 
-    def render(self, response: UseCaseResponse, presenter_hint: str) -> str:
+    def render(self, response: UseCaseResponse, presenter_hint: FabzendaHints) -> str:
         if presenter_hint in self._registry:
             return self._registry[presenter_hint](**response.data)
 

@@ -9,7 +9,7 @@ class AnimalModifierService:
     def __init__(self, db_context: DatabaseExternal):
         self.animal_modifier_repository = AnimalModifierRepository(db_context)
 
-    def get_random_modifier(self) -> AnimalModifierEntity:
+    def get_random_modifier(self) -> AnimalModifierEntity | None:
         chance_no_modifier = 0.60
         chance_common = 0.25
         chance_uncommon = 0.10

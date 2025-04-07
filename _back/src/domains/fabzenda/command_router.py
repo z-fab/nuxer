@@ -1,6 +1,7 @@
 from domains.fabzenda.use_cases.alimentar_animal import AlimentarAnimal
 from domains.fabzenda.use_cases.comprar_animal import ComprarAnimal
 from domains.fabzenda.use_cases.detalhe_animal_celeiro import DetalheAnimalCeleiro
+from domains.fabzenda.use_cases.enterrar_animal import EnterrarAnimal
 from domains.fabzenda.use_cases.ver_celeiro import VerCeleiro
 from domains.fabzenda.use_cases.ver_fabzenda import VerFabzenda
 from shared.dto.slack_command_input import SlackCommandInput
@@ -25,6 +26,8 @@ def handle_fabzenda(input_data: SlackCommandInput, set_status: callable) -> UseC
             return ComprarAnimal(input_data)()
         case "alimentar":
             return AlimentarAnimal(input_data)()
+        case "enterrar":
+            return EnterrarAnimal(input_data)()
         case _:
             return UseCaseResponse(
                 success=True,

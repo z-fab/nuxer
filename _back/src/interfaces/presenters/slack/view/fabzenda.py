@@ -11,11 +11,8 @@ class FabzendaSlackPresenter:
     def __init__(self, now: datetime | None = None):
         self.now = now or datetime.now()
 
-    def wallet_not_found(self, **kwargs) -> str:
-        return "Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_WALLET_NOT_FOUND
-
-    def fazenda_vazia(self, apelido: str, **kwargs) -> str:
-        return "Minha Fabzenda", MSG.TEMPLATE_FABZENDA_FAZENDA_VAZIA.format(apelido=apelido)
+    def fazenda_overview_vazia(self, apelido: str, **kwargs) -> str:
+        return "Minha Fabzenda", MSG.FAZENDA_OVERVIEW_VAZIA.format(apelido=apelido)
 
     def fazenda_overview(self, user_animals: list[UserAnimalEntity], user: UserEntity, **kwargs) -> str:
         slots_fabzenda = [f"{animal.animal_type.emoji}" for animal in user_animals]
@@ -24,7 +21,7 @@ class FabzendaSlackPresenter:
         for animal in user_animals:
             # Verificando se o animal está morto
             if animal.health == 0:
-                animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_MORTO.format(
+                animals_text += MSG.FAZENDA_OVERVIEW_ANIMAL_DEAD.format(
                     emoji=animal.animal_type.emoji,
                     burial_cost=animal.burial_cost,
                     type=animal.animal_type.name,
@@ -36,7 +33,7 @@ class FabzendaSlackPresenter:
 
             # Verificando se o animal foi Abduzido
             if (animal.expiry_date < datetime.now()) or (animal.health == -1):
-                animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_EXPIRADO.format(
+                animals_text += MSG.FAZENDA_OVERVIEW_ANIMAL_ABDUZIDO.format(
                     emoji=animal.animal_type.emoji,
                     expire_value=animal.expire_value,
                     type=animal.animal_type.name,
@@ -52,16 +49,14 @@ class FabzendaSlackPresenter:
             age = (datetime.now() - animal.purchase_date).days
 
             map_health_description = {
-                4: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_4,
-                3: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_3,
-                2: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_2,
-                1: MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_1,
+                4: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4,
+                3: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_3,
+                2: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_2,
+                1: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_1,
             }
-            health_description = map_health_description.get(
-                animal.health, MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL_HEALTH_4
-            )
+            health_description = map_health_description.get(animal.health, MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4)
 
-            animals_text += MSG.TEMPLATE_FABZENDA_FAZENDA_ANIMAL.format(
+            animals_text += MSG.FAZENDA_OVERVIEW_ANIMALS.format(
                 emoji=animal.animal_type.emoji,
                 type=animal.animal_type.name,
                 name=animal.name,
@@ -82,14 +77,14 @@ class FabzendaSlackPresenter:
                 primary="P" if (animal.food_slot == 0 or animal.health < 4) else "",
             )
 
-        return "Fabzenda 🏕️", MSG.TEMPLATE_FABZENDA_FAZENDA.format(
+        return "Fabzenda 🏕️", MSG.FAZENDA_OVERVIEW.format(
             apelido=user.apelido, slots=" ".join(slots_fabzenda), animals=animals_text
         )
 
     def celeiro_overview(self, animal_types: list[UserAnimalEntity], balance: int, **kwargs) -> str:
         animals_text = ""
         for animal in animal_types:
-            animals_text += MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL.format(
+            animals_text += MSG.CELEIRO_OVERVIEW_ANIMALS.format(
                 id=animal.type_id,
                 name=animal.name,
                 emoji=animal.emoji,
@@ -97,13 +92,13 @@ class FabzendaSlackPresenter:
                 description=animal.description,
             )
 
-        return "Celeiro Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO.format(
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_OVERVIEW.format(
             balance=balance,
             animals=animals_text,
         )
 
-    def detalhe_animal_celeiro(self, animal_type: UserAnimalEntity, **kwargs) -> str:
-        return "Detalhe do Fabichinho 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_DETALHE.format(
+    def celeiro_detalhe_animal(self, animal_type: UserAnimalEntity, **kwargs) -> str:
+        return "Detalhe do Fabichinho 🌾", MSG.CELEIRO_ANIMAL_DETAIL.format(
             id=animal_type.type_id,
             name=animal_type.name,
             emoji=animal_type.emoji,
@@ -114,7 +109,35 @@ class FabzendaSlackPresenter:
             description=animal_type.description,
         )
 
-    def comprar_animal(
+    def celeiro_max_animals_reached(self, apelido, **kwargs) -> str:
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_MAX_REACHED.format(
+            apelido=apelido,
+        )
+
+    def celeiro_insufficient_balance(self, apelido, **kwargs) -> str:
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_INSUFFICIENT_BALANCE.format(
+            apelido=apelido,
+        )
+
+    def celeiro_animal_type_not_available(self, apelido, **kwargs) -> str:
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_NOT_AVAILABLE.format(
+            apelido=apelido,
+        )
+
+    def celeiro_transaction_error(self, apelido, **kwargs) -> str:
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_TRANSACTION_ERROR.format(
+            apelido=apelido,
+        )
+
+    def celeiro_created_error(self, apelido, **kwargs) -> str:
+        return "Celeiro Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_CREATED_ERROR.format(
+            apelido=apelido,
+        )
+
+    def celeiro_wallet_not_found(self, **kwargs) -> str:
+        return "Canto Bão 🌾", MSG.CELEIRO_ANIMAL_DETAIL_WALLET_NOT_FOUND
+
+    def celeiro_compra_animal(
         self,
         user: UserEntity,
         user_animal: UserAnimalEntity,
@@ -130,34 +153,46 @@ class FabzendaSlackPresenter:
             modifier_text = "Seu fabichinho é `Normal 🌱`"
             modifier_text += ": Ele não tem nenhum modificador especial mas é muito especial para você"
 
-        message = MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_COMPRADO.format(
+        message = MSG.CELEIRO_ANIMAL_DETAIL_BUY_SUCCESS.format(
             apelido=user.apelido, emoji=animal_type.emoji, nome=user_animal.name, modifier=modifier_text
         )
 
         return "Parabéns 🎉", message
 
-    def max_animals_reached(self, apelido, **kwargs) -> str:
-        return "Celeiro Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_ERROR_MAX_ANIMALS.format(
-            apelido=apelido,
-        )
-
-    def insufficient_balance(self, apelido, **kwargs) -> str:
-        return "Celeiro Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_ERROR_INSUFFICIENT_BALANCE.format(
-            apelido=apelido,
-        )
-
-    def animal_type_not_available(self, apelido, **kwargs) -> str:
-        return "Celeiro Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_ERROR_UNAVAILABLE.format(
-            apelido=apelido,
-        )
-
-    def transaction_error(self, apelido, **kwargs) -> str:
-        return "Celeiro Canto Bão 🌾", MSG.TEMPLATE_FABZENDA_CELEIRO_ANIMAL_NAO_COMPRADO.format(
-            apelido=apelido,
-        )
+    #####
 
     def alimentar_animal(self, apelido: str, **kwargs) -> str:
-        return "Fabzenda 🏕️", MSG.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_SUCESSO.format(apelido=apelido)
+        return "Fabzenda 🏕️", MSG.FEED_SUCCESS.format(apelido=apelido)
 
-    def generic_error(self, **kwargs) -> str:
-        return "Fabzenda 🏕️", MSG.TEMPLATE_FABZENDA_GENERIC_ERROR
+    def alimentar_insufficient_balance(self, apelido, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.FEED_INSUFFICIENT_BALANCE.format(
+            apelido=apelido,
+        )
+
+    def alimentar_animal_dead(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.FEED_ANIMAL_DEAD.format(apelido=apelido)
+
+    def alimentar_transaction_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.FEED_TRANSACTION_ERROR.format(apelido=apelido)
+
+    def alimentar_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.FEED_ERROR.format(apelido=apelido)
+
+    ####
+
+    def enterrar_animal(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.BURIAL_SUCCESS.format(apelido=apelido)
+
+    def enterrar_insufficient_balance(self, apelido, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.BURIAL_INSUFFICIENT_BALANCE.format(
+            apelido=apelido,
+        )
+
+    def enterrar_animal_lives(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.BURIAL_ANIMAL_LIVES.format(apelido=apelido)
+
+    def enterrar_transaction_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.BURIAL_TRANSACTION_ERROR.format(apelido=apelido)
+
+    def enterrar_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.BURIAL_ERROR.format(apelido=apelido)

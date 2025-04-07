@@ -11,7 +11,12 @@ class UserAnimalRepository:
 
     def get_user_animal_by_id(self, user_animal_id: str) -> UserAnimalEntity | None:
         with self._db_session() as session:
-            orm = session.query(UserAnimalORM).filter(UserAnimalORM.animal_id == user_animal_id).first()
+            orm = (
+                session.query(UserAnimalORM)
+                .filter(UserAnimalORM.animal_id == user_animal_id)
+                .order_by(UserAnimalORM.animal_id)
+                .first()
+            )
             if not orm:
                 return None
 

@@ -2,6 +2,7 @@ from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
 from domains.user.repositories.user import UserRepository
+from interfaces.presenters.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
@@ -60,7 +61,7 @@ class ComprarAnimal:
                 success=False,
                 data={"apelido": user.apelido},
                 notification=[
-                    {"presenter_hint": f"fabzenda.{service_response.error}"},
+                    {"presenter_hint": service_response.error},
                 ],
             )
 
@@ -69,6 +70,6 @@ class ComprarAnimal:
             success=True,
             data=service_response.data,
             notification=[
-                {"presenter_hint": "fabzenda.comprar_animal"},
+                {"presenter_hint": FabzendaHints.CELEIRO_ANIMAL_BUY_SUCCESS},
             ],
         )
