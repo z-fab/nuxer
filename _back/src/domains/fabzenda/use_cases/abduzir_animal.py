@@ -1,5 +1,5 @@
 from domains.fabbank.services.transaction import TransactionService
-from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
+from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
 from domains.user.repositories.user import UserRepository
 from interfaces.presenters.hints import FabzendaHints
@@ -8,7 +8,7 @@ from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
 
-class ComprarAnimal:
+class AbduzirAnimal:
     def __init__(self, input_data: SlackCommandInput):
         self.input = input_data
 
@@ -16,30 +16,30 @@ class ComprarAnimal:
         user_repository = UserRepository(db)
         user = user_repository.get_user_by_slack_id(self.input.user_id)
 
-        animal_type_repository = AnimalTypeRepository(db)
-        animal_type = animal_type_repository.get_animal_type_by_id(self.input.args[1])
+        user_animal_repository = UserAnimalRepository(db)
+        user_animal = user_animal_repository.get_user_animal_by_id(self.input.args[1])
 
         user_animal_service = UserAnimalService(db)
 
-        # Verificando se o usuário pode e consegue comprar o animal
-        response_can_buy = user_animal_service._can_buy_animal_entity(user_id=user.id, animal_type=animal_type)
+        # Verificando se o usuário pode e consegue abduzir o animal
+        response_can_abduction = user_animal_service._can_abduction_animal_entity(user_animal=user_animal)
 
-        if not response_can_buy.success:
+        if not response_can_abduction.success:
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
                 notification=[
-                    {"presenter_hint": response_can_buy.error},
+                    {"presenter_hint": response_can_abduction.error},
                 ],
             )
 
-        # Removendo o dinheiro da conta do usuário
+        # Adicionando o dinheiro da conta do usuário
         transaction_service = TransactionService(db)
         response_transaction = transaction_service.change_coins(
             from_id="0",
             to_id=user.id,
-            value=(-animal_type.base_price),
-            description=f"[Fabzenda] Adoção Fabichinho: {animal_type.name}",
+            value=user_animal.expire_value,
+            description=f"[Fabzenda] Fabichinho Abduzido: {user_animal.name}",
         )
 
         if not response_transaction.success:
@@ -47,14 +47,12 @@ class ComprarAnimal:
                 success=False,
                 data={"apelido": user.apelido},
                 notification=[
-                    {"presenter_hint": FabzendaHints.CELEIRO_TRANSACTION_ERROR},
+                    {"presenter_hint": FabzendaHints.ABDUCTION_TRANSACTION_ERROR},
                 ],
             )
 
-        service_response = user_animal_service._buy_animal_entity(
-            user_id=user.id,
-            animal_type=animal_type,
-        )
+        # Atualizar o status do animal abduzido
+        service_response = user_animal_service._abduction_animal_entity(user_animal=user_animal)
 
         if not service_response.success:
             return UseCaseResponse(
@@ -65,11 +63,11 @@ class ComprarAnimal:
                 ],
             )
 
-        service_response.data["user"] = user
+        service_response.data["apelido"] = user.apelido
         return UseCaseResponse(
             success=True,
             data=service_response.data,
             notification=[
-                {"presenter_hint": FabzendaHints.CELEIRO_ANIMAL_BUY_SUCCESS},
+                {"presenter_hint": FabzendaHints.ABDUCTION_SUCCESS},
             ],
         )

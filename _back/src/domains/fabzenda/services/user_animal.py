@@ -200,3 +200,51 @@ class UserAnimalService:
             )
 
         return ServiceResponse(success=True, data={"user_animal": user_animal})
+
+    def abduction_animal(self, user_animal_id: int) -> ServiceResponse:
+        user_animal = self.user_animal_repository.get_user_animal_by_id(user_animal_id)
+
+        return self._abduction_animal_entity(user_animal=user_animal)
+
+    def _abduction_animal_entity(self, user_animal: UserAnimalEntity) -> ServiceResponse:
+        user_animal.is_alive = False
+        user_animal.health = -1
+
+        response = self.user_animal_repository.update_user_animal(user_animal)
+        if not response:
+            return ServiceResponse(
+                success=False,
+                error=FabzendaHints.ABDUCTION_ERROR,
+            )
+
+        return ServiceResponse(
+            success=True,
+            data={
+                "user_animal": response,
+            },
+        )
+
+    def can_abduction_animal(self, user_animal_id: int) -> ServiceResponse:
+        user_animal = self.user_animal_repository.get_user_animal_by_id(user_animal_id)
+        return self._can_abduction_animal_entity(user_animal=user_animal)
+
+    def _can_abduction_animal_entity(self, user_animal: UserAnimalEntity) -> ServiceResponse:
+        print("not user_animal", not user_animal)
+        print("user_animal.is_alive", not user_animal.is_alive)
+        print("user_animal.health", user_animal.health not in (0, -1))
+        print(user_animal.expiry_date > datetime.now())
+        print("user_animal.expiry_date", user_animal.expiry_date)
+        print("datetime.now()", datetime.now())
+        # Verificando se o animal existe e está morto
+        if (
+            not user_animal
+            or not user_animal.is_alive
+            or user_animal.health in (0, -1)
+            or user_animal.expiry_date > datetime.now()
+        ):
+            return ServiceResponse(
+                success=False,
+                error=FabzendaHints.ABDUCTION_ANIMAL_LIVES,
+            )
+
+        return ServiceResponse(success=True, data={"user_animal": user_animal})

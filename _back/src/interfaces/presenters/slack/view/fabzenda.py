@@ -32,7 +32,7 @@ class FabzendaSlackPresenter:
                 continue
 
             # Verificando se o animal foi Abduzido
-            if (animal.expiry_date < datetime.now()) or (animal.health == -1):
+            if (animal.expiry_date <= datetime.now()) or (animal.health == -1):
                 animals_text += MSG.FAZENDA_OVERVIEW_ANIMAL_ABDUZIDO.format(
                     emoji=animal.animal_type.emoji,
                     expire_value=animal.expire_value,
@@ -48,14 +48,6 @@ class FabzendaSlackPresenter:
 
             age = (datetime.now() - animal.purchase_date).days
 
-            map_health_description = {
-                4: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4,
-                3: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_3,
-                2: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_2,
-                1: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_1,
-            }
-            health_description = map_health_description.get(animal.health, MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4)
-
             animals_text += MSG.FAZENDA_OVERVIEW_ANIMALS.format(
                 emoji=animal.animal_type.emoji,
                 type=animal.animal_type.name,
@@ -63,15 +55,9 @@ class FabzendaSlackPresenter:
                 reward=animal.reward,
                 expire_value=animal.expire_value,
                 modifier=f"{animal.modifier.name} {animal.modifier.emoji}" if animal.modifier else "Normal 🌱",
-                modifier_description=animal.modifier.resume_modifier
-                if animal.modifier
-                else "Seu fabichinho é normal (mas continua especial)",
                 health=animal.health_str,
-                health_description=health_description,
                 hunger=hunger,
-                hunger_rate=animal.hunger_rate,
                 age=f"{age} dias" if age > 1 else f"{age} dia" if age == 1 else "Recém-nascido",
-                lifespan=animal.lifespan,
                 feeding_cost=animal.feeding_cost,
                 id=animal.animal_id,
                 primary="P" if (animal.food_slot == 0 or animal.health < 4) else "",
@@ -80,6 +66,69 @@ class FabzendaSlackPresenter:
         return "Fabzenda 🏕️", MSG.FAZENDA_OVERVIEW.format(
             apelido=user.apelido, slots=" ".join(slots_fabzenda), animals=animals_text
         )
+
+    def fazenda_overview_detalhe_animal(self, user_animal: UserAnimalEntity, **kwargs) -> str:
+        animals_text = ""
+
+        if user_animal.health == 0:
+            animals_text = MSG.FAZENDA_OVERVIEW_ANIMAL_DEAD.format(
+                emoji=user_animal.animal_type.emoji,
+                burial_cost=user_animal.burial_cost,
+                type=user_animal.animal_type.name,
+                name=user_animal.name,
+                health=user_animal.health_str,
+                id=user_animal.animal_id,
+            )
+
+        # Verificando se o animal foi Abduzido
+
+        elif (user_animal.expiry_date <= datetime.now()) or (user_animal.health == -1):
+            animals_text = MSG.FAZENDA_OVERVIEW_ANIMAL_ABDUZIDO.format(
+                emoji=user_animal.animal_type.emoji,
+                expire_value=user_animal.expire_value,
+                type=user_animal.animal_type.name,
+                name=user_animal.name,
+                id=user_animal.animal_id,
+            )
+        else:
+            food_slot_full = " `🍔` " * user_animal.food_slot
+            food_slot_empty = " `‧` " * (4 - user_animal.food_slot)
+            hunger = f"{food_slot_full}{food_slot_empty}"
+
+            age = (datetime.now() - user_animal.purchase_date).days
+
+            map_health_description = {
+                4: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4,
+                3: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_3,
+                2: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_2,
+                1: MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_1,
+            }
+            health_description = map_health_description.get(user_animal.health, MSG.FAZENDA_OVERVIEW_ANIMAL_HEALTH_4)
+
+            animals_text = MSG.FAZENDA_OVERVIEW_ANIMALS_DETAIL.format(
+                emoji=user_animal.animal_type.emoji,
+                type=user_animal.animal_type.name,
+                name=user_animal.name,
+                reward=user_animal.reward,
+                expire_value=user_animal.expire_value,
+                modifier=f"{user_animal.modifier.name} {user_animal.modifier.emoji}"
+                if user_animal.modifier
+                else "Normal 🌱",
+                modifier_description=user_animal.modifier.resume_modifier
+                if user_animal.modifier
+                else "Seu fabichinho é normal (mas continua especial)",
+                health=user_animal.health_str,
+                health_description=health_description,
+                hunger=hunger,
+                hunger_rate=user_animal.hunger_rate,
+                age=f"{age} dias" if age > 1 else f"{age} dia" if age == 1 else "Recém-nascido",
+                lifespan=user_animal.lifespan,
+                feeding_cost=user_animal.feeding_cost,
+                id=user_animal.animal_id,
+                primary="P" if (user_animal.food_slot == 0 or user_animal.health < 4) else "",
+            )
+
+        return "Fabzenda 🏕️", animals_text
 
     def celeiro_overview(self, animal_types: list[UserAnimalEntity], balance: int, **kwargs) -> str:
         animals_text = ""
@@ -196,3 +245,17 @@ class FabzendaSlackPresenter:
 
     def enterrar_error(self, apelido: str, **kwargs) -> str:
         return "Fabzenda 🏕️", MSG.BURIAL_ERROR.format(apelido=apelido)
+
+    ####
+
+    def abduzir_animal(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.ABDUCTION_SUCCESS.format(apelido=apelido)
+
+    def abduzir_animal_lives(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.ABDUCTION_ANIMAL_LIVES.format(apelido=apelido)
+
+    def abduzir_transaction_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.ABDUCTION_TRANSACTION_ERROR.format(apelido=apelido)
+
+    def abduzir_error(self, apelido: str, **kwargs) -> str:
+        return "Fabzenda 🏕️", MSG.ABDUCTION_ERROR.format(apelido=apelido)

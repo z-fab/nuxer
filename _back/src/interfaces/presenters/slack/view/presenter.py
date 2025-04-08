@@ -11,6 +11,8 @@ class ViewPresenter:
         self._registry = {
             FabzendaHints.FAZENDA_OVERVIEW: self.fabzenda.fazenda_overview,
             FabzendaHints.FAZENDA_OVERVIEW_VAZIA: self.fabzenda.fazenda_overview_vazia,
+            FabzendaHints.FAZENDA_OVERVIEW_DETALHE_ANIMAL: self.fabzenda.fazenda_overview_detalhe_animal,
+            ##
             FabzendaHints.CELEIRO_OVERVIEW: self.fabzenda.celeiro_overview,
             FabzendaHints.CELEIRO_DETALHE_ANIMAL: self.fabzenda.celeiro_detalhe_animal,
             FabzendaHints.CELEIRO_MAX_ANIMALS_REACHED: self.fabzenda.celeiro_max_animals_reached,
@@ -33,6 +35,10 @@ class ViewPresenter:
             FabzendaHints.BURIAL_ERROR: self.fabzenda.enterrar_error,
             FabzendaHints.BURIAL_SUCCESS: self.fabzenda.enterrar_animal,
             ##
+            FabzendaHints.ABDUCTION_ANIMAL_LIVES: self.fabzenda.abduzir_animal_lives,
+            FabzendaHints.ABDUCTION_TRANSACTION_ERROR: self.fabzenda.abduzir_transaction_error,
+            FabzendaHints.ABDUCTION_ERROR: self.fabzenda.abduzir_error,
+            FabzendaHints.ABDUCTION_SUCCESS: self.fabzenda.abduzir_animal,
         }
 
     def render(self, response: UseCaseResponse, presenter_hint: FabzendaHints) -> str:

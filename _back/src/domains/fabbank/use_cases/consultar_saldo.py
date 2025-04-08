@@ -1,6 +1,5 @@
 from loguru import logger
 
-from domains.fabbank.repositories.wallet import WalletRepository
 from domains.fabbank.services.wallet import WalletService
 from domains.user.repositories.user import UserRepository
 from shared.dto.slack_command_input import SlackCommandInput
@@ -16,7 +15,7 @@ class ConsultarSaldo:
         try:
             user_repository = UserRepository(db)
             user = user_repository.get_user_by_slack_id(self.input.user_id)
-            wallet_service = WalletService(WalletRepository(db))
+            wallet_service = WalletService(db)
             response = wallet_service.get_balance_info(user.id)
 
             if response.success:

@@ -213,66 +213,66 @@ class FabzendaAction(Action):
     #     view["title"]["text"] = "Sua Fabzenda 🏕️"
     #     self.OPEN_VIEW(view=view, content=text)
 
-    def _opt_alimentar_animal(self):
-        view = CONST_VIEW.VIEW_HOME_FABZENDA
-        animal_user_id = self.PARAMS[1]
-        fzs = FabzendaService(self.USER)
+    # def _opt_alimentar_animal(self):
+    #     view = CONST_VIEW.VIEW_HOME_FABZENDA
+    #     animal_user_id = self.PARAMS[1]
+    #     fzs = FabzendaService(self.USER)
 
-        try:
-            fzs.alimentar_animal(animal_user_id)
+    #     try:
+    #         fzs.alimentar_animal(animal_user_id)
 
-            text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_SUCESSO.format(apelido=self.USER.apelido)
+    #         text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_SUCESSO.format(apelido=self.USER.apelido)
 
-            view["title"]["text"] = "Fabichinho alimentado! 🥘"
-            self.OPEN_VIEW(view=view, content=text)
+    #         view["title"]["text"] = "Fabichinho alimentado! 🥘"
+    #         self.OPEN_VIEW(view=view, content=text)
 
-        except Exception as e:
-            logger.error(f"Erro ao alimentar animal: {e}")
-            match str(e):
-                case CONST_ERROR.FABZENDA_ALIMENTAR_ANIMAL_NOT_FOUND:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_NOT_FOUND.format(apelido=self.USER.apelido)
-                case CONST_ERROR.FABZENDA_ALIMENTAR_ANIMAL_DEAD:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_DEAD.format(apelido=self.USER.apelido)
-                case CONST_ERROR.FABZENDA_ALIMENTAR_INSUFFICIENT_BALANCE:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_INSUFFICIENT_BALANCE.format(
-                        apelido=self.USER.apelido
-                    )
-                case _:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_ERROR.format(apelido=self.USER.apelido)
+    #     except Exception as e:
+    #         logger.error(f"Erro ao alimentar animal: {e}")
+    #         match str(e):
+    #             case CONST_ERROR.FABZENDA_ALIMENTAR_ANIMAL_NOT_FOUND:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_NOT_FOUND.format(apelido=self.USER.apelido)
+    #             case CONST_ERROR.FABZENDA_ALIMENTAR_ANIMAL_DEAD:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_DEAD.format(apelido=self.USER.apelido)
+    #             case CONST_ERROR.FABZENDA_ALIMENTAR_INSUFFICIENT_BALANCE:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_INSUFFICIENT_BALANCE.format(
+    #                     apelido=self.USER.apelido
+    #                 )
+    #             case _:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ALIMENTAR_ANIMAL_ERROR.format(apelido=self.USER.apelido)
 
-            view["title"]["text"] = "Ops, deu errado! ⚠️"
-            self.OPEN_VIEW(view=view, content=text)
-            return False
+    #         view["title"]["text"] = "Ops, deu errado! ⚠️"
+    #         self.OPEN_VIEW(view=view, content=text)
+    #         return False
 
-    def _opt_enterrar_animal(self):
-        view = CONST_VIEW.VIEW_HOME_FABZENDA
-        animal_user_id = self.PARAMS[1]
-        fzs = FabzendaService(self.USER)
+    # def _opt_enterrar_animal(self):
+    #     view = CONST_VIEW.VIEW_HOME_FABZENDA
+    #     animal_user_id = self.PARAMS[1]
+    #     fzs = FabzendaService(self.USER)
 
-        try:
-            fzs.enterrar_animal(animal_user_id)
-            text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_SUCESSO.format(apelido=self.USER.apelido)
+    #     try:
+    #         fzs.enterrar_animal(animal_user_id)
+    #         text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_SUCESSO.format(apelido=self.USER.apelido)
 
-            view["title"]["text"] = "Fabichinho Enterrado 🪦"
-            self.OPEN_VIEW(view=view, content=text)
+    #         view["title"]["text"] = "Fabichinho Enterrado 🪦"
+    #         self.OPEN_VIEW(view=view, content=text)
 
-        except Exception as e:
-            logger.error(f"Erro ao enterrar animal: {e}")
-            match str(e):
-                case CONST_ERROR.FABZENDA_ENTERRAR_INSUFFICIENT_BALANCE:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_INSUFFICIENT_BALANCE.format(
-                        apelido=self.USER.apelido
-                    )
-                case CONST_ERROR.FABZENDA_ENTERRAR_ANIMAL_NOT_FOUND:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_NOT_FOUND.format(apelido=self.USER.apelido)
-                case CONST_ERROR.FABZENDA_ENTERRAR_ANIMAL_LIVE:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_LIVE.format(apelido=self.USER.apelido)
-                case _:
-                    text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_ERROR.format(apelido=self.USER.apelido)
+    #     except Exception as e:
+    #         logger.error(f"Erro ao enterrar animal: {e}")
+    #         match str(e):
+    #             case CONST_ERROR.FABZENDA_ENTERRAR_INSUFFICIENT_BALANCE:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_INSUFFICIENT_BALANCE.format(
+    #                     apelido=self.USER.apelido
+    #                 )
+    #             case CONST_ERROR.FABZENDA_ENTERRAR_ANIMAL_NOT_FOUND:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_NOT_FOUND.format(apelido=self.USER.apelido)
+    #             case CONST_ERROR.FABZENDA_ENTERRAR_ANIMAL_LIVE:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_LIVE.format(apelido=self.USER.apelido)
+    #             case _:
+    #                 text = CONST_MESSAGE.TEMPLATE_FABZENDA_ENTERRAR_ANIMAL_ERROR.format(apelido=self.USER.apelido)
 
-            view["title"]["text"] = "Ops, deu errado! ⚠️"
-            self.OPEN_VIEW(view=view, content=text)
-            return False
+    #         view["title"]["text"] = "Ops, deu errado! ⚠️"
+    #         self.OPEN_VIEW(view=view, content=text)
+    #         return False
 
     def _opt_expirar_animal(self):
         view = CONST_VIEW.VIEW_HOME_FABZENDA

@@ -25,6 +25,22 @@ FAZENDA_OVERVIEW_ANIMALS = """
 --
 .
 {emoji} {type} *{name}* `🎰 F₵ {reward}` `🛸 F₵ {expire_value}`
+: Seu fabichinho está lorem ipsum dolor sit amet, consectetur adipiscing elit.
+.
+↳ *Saúde*: `{health}`
+↳ *Fome*: {hunger}
+↳ *Idade*: `{age}`
+↳ *Modificador*: `{modifier}`
+.
+<👁️ Detalhe do Fabichinho (fabzenda)[opt=detalhe_animal_fabzenda,id={id}]P> <🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=alimentar,id={id}]{primary}>
+.
+"""
+
+###
+FAZENDA_OVERVIEW_ANIMALS_DETAIL = """
+
+{emoji} {type} *{name}* `🎰 F₵ {reward}` `🛸 F₵ {expire_value}`
+_Seu fabichinho está lorem ipsum dolor sit amet, consectetur adipiscing elit_
 .
 > *Saúde*: `{health}`
 {health_description}
@@ -37,10 +53,11 @@ FAZENDA_OVERVIEW_ANIMALS = """
 .
 > *Modificador*: `{modifier}`
 : _{modifier_description}_
-
-<🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=alimentar,id={id}]{primary}>
+.
+<🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=alimentar,id={id}]{primary}> <🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]>
 .
 """
+###
 
 FAZENDA_OVERVIEW_ANIMAL_HEALTH_4 = """
 : _Seu fabichinho está muito bem! Continue cuidando dele._
@@ -76,7 +93,7 @@ FAZENDA_OVERVIEW_ANIMAL_ABDUZIDO = """
 {emoji} {type} *{name}* `🛸 Abduzido`
 Um ovni levou seu fabichinho! Virou estrela :star: 
 : Parabéns pelo cuidado que teve durante esse tempo. Os seres de outro planeta deixaram uma recompensa para você.
-<🛸 Receber F₵ {expire_value}(fabzenda)[opt=btn_expirar,id={id}]P>
+<🛸 Receber F₵ {expire_value}(fabzenda)[opt=abduzir,id={id}]P>
 """
 
 ###
@@ -214,30 +231,35 @@ BURIAL_SUCCESS = """
 <🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
-### !!!!
+###
 
-TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_SUCESSO = """
-{apelido}, você recebeu a recompensa por ter um fabichinho abduzido!
-: Agradeça aos seres de outro planeta.
-.
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
-"""
-
-TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_ERROR = """
-{apelido}, não foi possível receber a recompensa. Algo deu errado.
-: Tente novamente e avise o Fabs
-.
-<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
-"""
-
-TEMPLATE_FABZENDA_EXPIRAR_ANIMAL_LIVE = """
-{apelido}, não foi possível receber a recompensa. Ele não foi abduzido.
+ABDUCTION_ANIMAL_LIVES = """
+{apelido}, não foi possível receber a recompensa da abdução. Fabichinho ainda não foi abduzido.
 : Para ver seus fabichinhos, vá até sua Fabzenda
 .
 <🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
-###
+ABDUCTION_TRANSACTION_ERROR = """
+{apelido}, não foi possível receber a recompensa da abdução. Algo deu errado na hora do pagamento.
+: Tente novamente e, caso não funcione, entre em contato com o Fabs
+"""
+
+ABDUCTION_ERROR = """
+{apelido}, não foi possível receber a recompensa da abdução. Algo deu errado.
+: Tente novamente e, caso não funcione, entre em contato com o Fabs
+.
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
+"""
+
+ABDUCTION_SUCCESS = """
+{apelido}, você recebeu a recompensa por ter um fabichinho abduzido!
+: Agradeça aos seres de outro planeta 👽.
+.
+<🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
+"""
+
+### !!!!
 
 TEMPLATE_FABZENDA_LOTTERY_WIN = """
 # Resultado - Jogo do Fabichinhos 🎰
