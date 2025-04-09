@@ -9,7 +9,7 @@ class FabbankSlackPresenter:
         self.now = now or datetime.now()
 
     def balance(self, user_wallet: WalletEntity, **kwargs) -> str:
-        return MSG.TEMPLATE_FABBANK_WALLET.format(
+        return MSG.BALANCE.format(
             apelido=user_wallet.user.apelido,
             balance=user_wallet.balance,
             id_wallet=user_wallet.wallet_id,
@@ -21,12 +21,16 @@ class FabbankSlackPresenter:
         for w in wallets:
             balances_text += f"*{w.user.nome}*: `F₵ {w.balance}`\n"
 
-        return MSG.TEMPLATE_FABBANK_WALLET_ADMIN.format(balance_total=total_balance, balances=balances_text)
+        return MSG.BALANCE_ADMIN.format(balance_total=total_balance, balances=balances_text)
 
+    def balance_wallet_not_found(self) -> str:
+        return MSG.BALANCE_WALLET_NOT_FOUND
+
+    ##
     def transfer_success(
         self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str, **kwargs
     ) -> str:
-        return MSG.TEMPLATE_FABBANK_TRANSFER_SUCCESS.format(
+        return MSG.TRANSFER_SUCCESS.format(
             apelido=wallet_from.user.apelido,
             amount=value,
             to_name=wallet_to.user.nome,
@@ -36,10 +40,12 @@ class FabbankSlackPresenter:
             data=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
         )
 
-    def transfer_notification(
+    def transfer_success_notification(
         self, wallet_from: WalletEntity, wallet_to: WalletEntity, value: int, description: str, **kwargs
     ) -> str:
-        template = MSG.TEMPLATE_FABBANK_TRANSFER_RECEIVE if value > 0 else MSG.TEMPLATE_FABBANK_DISCOUNT_RECEIVE
+        template = (
+            MSG.TRANSFER_SUCCESS_NOTIFICATION_RECEIVE if value > 0 else MSG.TRANSFER_SUCCESS_NOTIFICATION_DISCOUNT
+        )
 
         return template.format(
             to_apelido=wallet_to.user.apelido,
@@ -49,20 +55,14 @@ class FabbankSlackPresenter:
             desc=description,
         )
 
-    def wallet_not_found(self) -> str:
-        return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_WALLET_NOT_FOUND
+    def transfer_wrong_params(self) -> str:
+        return MSG.TRANSFER_WRONG_PARAMS
 
-    def wrong_params(self) -> str:
-        return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
-
-    def insufficient_balance(self) -> str:
-        return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_INSUFFICIENT_BALANCE
+    def transfer_insufficient_balance(self) -> str:
+        return MSG.TRANSFER_INSUFFICIENT_BALANCE
 
     def transfer_error(self) -> str:
-        return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
+        return MSG.TRANSFER_WRONG_PARAMS
 
     def transfer_permission(self) -> str:
         return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PERMISSION
-
-    def generic_error(self) -> str:
-        return "Ops, deu erro"

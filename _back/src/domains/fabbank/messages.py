@@ -3,17 +3,16 @@ Ops, parece que você não tem uma wallet no FabBank :warning:
 : Para criar uma fale com o Fabs
 """
 
-### FABBANK WALLET ###
+### FABBANK BALANCE ###
 
-TEMPLATE_FABBANK_WALLET = """
+BALANCE = """
 # Extrato do FabBank :moneybag:
 {apelido}, aqui está o saldo da sua Wallet:
 > *Saldo atual*: `F₵ {balance}`
 : Wallet ID: {id_wallet} - Valores atualizados em {data}
 """
 
-
-TEMPLATE_FABBANK_WALLET_ADMIN = """
+BALANCE_ADMIN = """
 # Saldos no Fabbank
 Aqui estão os saldos no Fabbank
 > *Saldo Total*: `F₵ {balance_total}`
@@ -21,9 +20,15 @@ Aqui estão os saldos no Fabbank
 {balances}
 """
 
+BALANCE_WALLET_NOT_FOUND = """
+Ops, parece que você não tem uma wallet no FabBank :warning:
+: Para criar uma fale com o Fabs
+"""
+
+
 ### FABBANK TRANSFERÊNCIA ###
 
-TEMPLATE_FABBANK_TRANSFER_SUCCESS = """
+TRANSFER_SUCCESS = """
 # Transferência Realizada com Sucesso :money_with_wings:
 {apelido}, você realizou uma transferência com o sucesso.
 > *Você transferiu* `F₵ {amount}` para `{to_name} (Wallet ID: {to_id_wallet})`
@@ -31,46 +36,41 @@ TEMPLATE_FABBANK_TRANSFER_SUCCESS = """
 : Wallet ID: {id_wallet} - transação realizada em {data}
 """
 
-TEMPLATE_FABBANK_TRANSFER_RECEIVE = """
+TRANSFER_SUCCESS_NOTIFICATION_RECEIVE = """
 # Recebimento de Transferência :moneybag:
 {to_apelido}, você recebeu uma transferência em sua Wallet.
 > *Você recebeu* `F₵ {amount}` de `{from_name} (Wallet ID: {from_id_wallet})`
 *Motivo informado:* _{desc}_
 """
 
-TEMPLATE_FABBANK_DISCOUNT_RECEIVE = """
+TRANSFER_SUCCESS_NOTIFICATION_DISCOUNT = """
 # Desconto Aplicado :money_with_wings:
 {to_apelido}, você recebeu um desconto em sua Wallet.
 > *Você foi descontado* em `F₵ {amount}` pelo `{from_name} (Wallet ID: {from_id_wallet})`
 *Motivo informado:* _{desc}_
 """
 
-TEMPLATE_FABBANK_TRANSFER_ERROR = """
+TRANSFER_ERROR = """
 Ops, ocorreu um erro ao realizar a transferência :warning:
-: Tente novamente e avise o Fabs
+: Tente novamente, e caso não funcione, avise o Fabs
 """
 
-TEMPLATE_FABBANK_TRANSFER_ERROR_USER_NOT_FOUND = """
-Ops, parece que o usuário que você escolheu para receber a transferência não tem uma wallet no FabBank :warning:
-: Verifique o usuário que você escolheu para receber a transferência e tente novamente
-"""
-
-TEMPLATE_FABBANK_TRANSFER_ERROR_WALLET_NOT_FOUND = """
+TRANSFER_WALLET_NOT_FOUND = """
 Ops, parece que você (ou a pessoa para quem você quer transferir) não tem uma wallet no FabBank :warning:
-: Para criar fale com o Fabs
+: Para criar uma, fale com o Fabs
 """
 
-TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS = """
+TRANSFER_WRONG_PARAMS = """
 Ops, parece que você não preencheu corretamente os parâmetros para realizar a transferência :warning:
 : Para realizar a transferência, utilize o comando `!fb` `pix` `[@usuario]` `[valor]` `"[descrição]"`
 """
 
-TEMPLATE_FABBANK_TRANSFER_ERROR_INSUFFICIENT_BALANCE = """
+TRANSFER_INSUFFICIENT_BALANCE = """
 Ops, parece que você não tem saldo suficiente para realizar a transferência ou o valor informado é inválido :warning:
 : Verifique o saldo da sua Wallet com o comando `!fb` `saldo`
 """
 
-TEMPLATE_FABBANK_TRANSFER_ERROR_PERMISSION = """
+TRANSFER_DONT_HAVE_PERMISSION = """
 Ops, você não tem permissão para realizar essa transferência :warning:
 : Como você descobriu esse comando? :eyes:
 """

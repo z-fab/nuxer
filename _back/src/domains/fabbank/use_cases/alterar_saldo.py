@@ -56,26 +56,26 @@ class AlterarSaldo:
         # Verificar se os argumentos estão corretos
         if len(self.input.args) < 3:
             logger.debug(f"Argumentos insuficientes para o comando: {self.input.args}")
-            return False, MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
+            return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair o usuário de destino
         to_user = self.input.args[1]
         if not to_user.startswith("<@") or not to_user.endswith(">"):
             logger.debug(f"Formato inválido para o usuário de destino: {to_user}")
-            return False, MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
+            return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair o valor
         try:
             int(self.input.args[2])
         except ValueError:
             logger.debug(f"Valor inválido para transferência: {self.input.args[2]}")
-            return False, MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
+            return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair a descrição
         description = self.input.args[3]
         if len(description) <= 0:
             logger.debug(f"Formato inválido para a descrição: {description} ")
-            return False, MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PARAMS
+            return False, MSG.TRANSFER_WRONG_PARAMS
 
         return True, {
             "to_slack_id": to_user[2:-1],

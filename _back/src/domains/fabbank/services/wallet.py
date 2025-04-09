@@ -1,4 +1,5 @@
 from domains.fabbank.repositories.wallet import WalletRepository
+from interfaces.presenters.hints import FabbankHints
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 
@@ -11,7 +12,7 @@ class WalletService:
         wallet = self.wallet_repository.get_wallet_by_user_id(user_id)
 
         if not wallet:
-            return ServiceResponse(success=False, error="fabbank.wallet_not_found")
+            return ServiceResponse(success=False, error=FabbankHints.BALANCE_NOT_FOUND)
 
         if wallet.user.role == 0:
             response = self._get_admin_balance()
