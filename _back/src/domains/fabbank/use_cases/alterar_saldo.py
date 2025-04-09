@@ -3,6 +3,7 @@ from loguru import logger
 from domains.fabbank import messages as MSG
 from domains.fabbank.services.transaction import TransactionService
 from domains.user.repositories.user import UserRepository
+from interfaces.presenters.hints import FabbankHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
@@ -13,44 +14,56 @@ class AlterarSaldo:
         self.input = input_data
 
     def __call__(self) -> UseCaseResponse:
-        try:
-            parsed_args, args = self._parse_args()
-            if not parsed_args:
-                return UseCaseResponse(success=False, notification=[{"presenter_hint": "fabbank.wrong_params"}])
+        parsed_args, args = self._parse_args()
+        if not parsed_args:
+            logger.error(f"Argumentos inválidos para a alteração de carteira: {self.input.args}")
+            return UseCaseResponse(success=False, notification=[{"presenter_hint": FabbankHints.TRANSFER_WRONG_PARAMS}])
 
-            user_respository = UserRepository(db)
-            user = user_respository.get_user_by_slack_id(self.input.user_id)
-            user_to = user_respository.get_user_by_slack_id(args["to_slack_id"])
+        user_respository = UserRepository(db)
+        user = user_respository.get_user_by_slack_id(self.input.user_id)
+        user_to = user_respository.get_user_by_slack_id(args["to_slack_id"])
 
-            transaction_service = TransactionService(db)
-            response = transaction_service.change_coins(user.id, user_to.id, args["value"], args["description"])
+        transaction_service = TransactionService(db)
 
-            if response.success:
-                logger.info(
-                    f"Transferência realizada de {self.input.user_id} para {args['to_slack_id']}: {args['value']} F₵ - {args['description']}"
-                )
-                return UseCaseResponse(
-                    success=True,
-                    data=response.data,
-                    notification=[
-                        {"presenter_hint": "fabbank.transfer_success"},
-                        {"presenter_hint": "fabbank.transfer_notification", "user": response.data["wallet_to"].user},
-                    ],
-                )
+        # Verificar se a transação pode ser feita
+        validate_response = transaction_service.validate_change_coins(
+            from_id=user.id, to_id=user_to.id, value=args["value"], description=args["description"]
+        )
 
+        if not validate_response.success:
+            logger.error(f"Erro ao validar a alteração de carteira: {validate_response.error}")
             return UseCaseResponse(
                 success=False,
-                data={},
-                notification=[{"presenter_hint": f"fabbank.{response.error}"}],
+                data={"apelido": user.apelido},
+                notification=[
+                    {"presenter_hint": validate_response.error},
+                ],
             )
 
-        except Exception as e:
-            logger.error(f"Erro ao realizar a transferência: {e}")
+        response = transaction_service.change_coins(user_to.id, args["value"], args["description"])
+
+        if response.success:
+            logger.info(
+                f"Alteração de Carteira realizada de {self.input.user_id} para {args['to_slack_id']}: {args['value']} F₵ - {args['description']}"
+            )
             return UseCaseResponse(
-                success=False,
+                success=True,
                 data=response.data,
-                notification=[{"presenter_hint": "fabbank.transfer_error"}],
+                notification=[
+                    {"presenter_hint": FabbankHints.TRANSFER_SUCCESS},
+                    {
+                        "presenter_hint": FabbankHints.TRANSFER_SUCCESS_NOTIFICATION,
+                        "user": user_to,
+                    },
+                ],
             )
+
+        logger.error(f"Erro ao realizar a alteração de carteira: {response.error}")
+        return UseCaseResponse(
+            success=False,
+            data={},
+            notification=[{"presenter_hint": response.error}],
+        )
 
     def _parse_args(self) -> dict | bool:
         # Verificar se os argumentos estão corretos
