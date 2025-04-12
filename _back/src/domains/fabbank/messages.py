@@ -75,6 +75,53 @@ Ops, você não tem permissão para realizar essa transferência :warning:
 : Como você descobriu esse comando? :eyes:
 """
 
+
+### FABBANK LOJA ###
+
+LOJA_OVERVIEW = """
+# Vendinha do Uxer 🛍️
+A melhor, maior e única loja do mundo que aceita Fabcoins! Preços atualizados a todo momento.
+> Seu saldo: `F₵ {balance}`
+--
+{items}
+"""
+
+LOJA_OVERVIEW_ITEM = """
+[ cod: *{id}* ] {item} `F₵ {price}`
+: {description}
+{amount}
+<🛒 Comprar(fabbank)[opt=comprar,id={id},preco={price}]>
+--
+"""
+
+LOJA_NOTIFICATION_BUY = """
+# Item Comprado 🛒
+{apelido}, você comprou um item da loja com sucesso!
+> {item} por `F₵ {price}`
+: Já notifiquei o fabs e em breve o item será enviado.
+"""
+
+LOJA_NOTIFICATION_ERROR = """
+# Ops, item não comprado 🛒
+{apelido}, não foi possível realizar a compra do seu item. Verifique seu saldo ou se o preço do item não foi alterado
+> {item} por `F₵ {price}`
+: Para verificar seu saldo, utilize o comando `!fb` `saldo` e para verificar os itens com preço atualizado, utilize o comando `!fb` `loja`
+"""
+
+LOJA_NOTIFICATION_BUY_ADMIN = """
+--
+# Item Comprado 🛍️
+{user_from} comprou um item da loja.
+> {item} por `F₵ {price}` em {data}
+--
+"""
+
+LOJA_WALLET_NOT_FOUND = """
+Ops, parece que você não tem uma wallet no FabBank. Você precisa de uma para comprar na loja :warning:
+: Para criar uma wallet fale com o Fabs
+"""
+
+
 ### FABBANK EXTRATO ###
 
 TEMPLATE_FABBANK_EXTRACT = """
@@ -89,46 +136,5 @@ TEMPLATE_FABBANK_EXTRACT_TRANSACTION = """
 *{user_from}* (Wallet ID: {id_wallet_from}) transferiu `F₵ {amount}`
 *Motivo:* {description}
 : Transação realizada em {timestamp}
---
-"""
-
-
-#### FABBANK LOJA ####
-
-TEMPLATE_FABBANK_LOJA = """
-# Vendinha do Uxer 🛍️
-A melhor, maior e única loja do mundo que aceita Fabcoins! Preços atualizados a todo momento.
-> Seu saldo: `F₵ {balance}`
---
-{items}
-"""
-
-TEMPLATE_FABBANK_LOJA_ITEM = """
-[ cod: *{id}* ] {item} `F₵ {price}`
-: {description}
-{amount}
-<🛒 Comprar(fb)[opt=btn_comprar,id={id},preco={price}]>
---
-"""
-
-TEMPLATE_FABBANK_LOJA_ITEM_COMPRADO = """
-# Item Comprado 🛒
-{apelido}, você comprou um item da loja com sucesso!
-> {item} por `F₵ {price}`
-: Já notifiquei o fabs e em breve o item será enviado.
-"""
-
-TEMPLATE_FABBANK_LOJA_ITEM_NAO_COMPRADO = """
-# Ops, item não comprado 🛒
-{apelido}, não foi possível realizar a compra do seu item. Verifique seu saldo ou se o preço do item não foi alterado
-> {item} por `F₵ {price}`
-: Para verificar seu saldo, utilize o comando `!fb` `saldo` e para verificar os itens com preço atualizado, utilize o comando `!fb` `loja`
-"""
-
-TEMPLATE_FABBANK_LOJA_ITEM_COMPRADO_ADMIN = """
---
-# Item Comprado 🛍️
-{user_from} comprou um item da loja.
-> {item} por `F₵ {price}` em {data}
 --
 """

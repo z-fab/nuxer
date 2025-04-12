@@ -20,6 +20,8 @@ class MessagePresenter:
             FabbankHints.TRANSFER_INSUFFICIENT_BALANCE: self.fabbank.transfer_insufficient_balance,
             FabbankHints.TRANSFER_ERROR: self.fabbank.transfer_error,
             FabbankHints.TRANSFER_PERMISSION_DENIED: self.fabbank.transfer_permission,
+            ##
+            FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
         }
 
     def render(self, response: UseCaseResponse, presenter_hint: str) -> str:

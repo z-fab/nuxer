@@ -16,7 +16,6 @@ class Transferir:
     def __call__(self) -> UseCaseResponse:
         parsed_args, args = self._parse_args()
         if not parsed_args:
-            logger.error(f"Argumentos inválidos para a transferência: {self.input.args}")
             return UseCaseResponse(success=False, notification=[{"presenter_hint": FabbankHints.TRANSFER_WRONG_PARAMS}])
 
         user_repository = UserRepository(db)
@@ -69,26 +68,26 @@ class Transferir:
     def _parse_args(self) -> dict | bool:
         # Verificar se os argumentos estão corretos
         if len(self.input.args) < 3:
-            logger.debug(f"Argumentos insuficientes para o comando: {self.input.args}")
+            logger.error(f"Argumentos insuficientes para o comando: {self.input.args}")
             return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair o usuário de destino
         to_user = self.input.args[1]
         if not to_user.startswith("<@") or not to_user.endswith(">"):
-            logger.debug(f"Formato inválido para o usuário de destino: {to_user}")
+            logger.error(f"Formato inválido para o usuário de destino: {to_user}")
             return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair o valor
         try:
             int(self.input.args[2])
         except ValueError:
-            logger.debug(f"Valor inválido para transferência: {self.input.args[2]}")
+            logger.error(f"Valor inválido para transferência: {self.input.args[2]}")
             return False, MSG.TRANSFER_WRONG_PARAMS
 
         # Extrair a descrição
         description = self.input.args[3]
         if len(description) <= 0:
-            logger.debug(f"Formato inválido para a descrição: {description} ")
+            logger.error(f"Formato inválido para a descrição: {description} ")
             return False, MSG.TRANSFER_WRONG_PARAMS
 
         return True, {

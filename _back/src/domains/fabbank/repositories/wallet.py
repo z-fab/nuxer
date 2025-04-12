@@ -43,6 +43,10 @@ class WalletRepository:
 
             return WalletEntity.model_validate(orm)
 
+    def get_total_coins(self) -> int:
+        all_wallets = self.get_all_wallets()
+        return sum(wallet.balance for wallet in all_wallets)
+
     def add_coins(self, wallet: WalletEntity, value: int) -> bool:
         with self._db_session() as session:
             orm = session.query(WalletORM).filter(WalletORM.wallet_id == wallet.wallet_id).first()

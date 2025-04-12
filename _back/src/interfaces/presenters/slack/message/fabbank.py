@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from domains.fabbank import messages as MSG
+from domains.fabbank.entities.item_loja import ItemLojaEntity
 from domains.fabbank.entities.wallet import WalletEntity
 
 
@@ -66,3 +67,28 @@ class FabbankSlackPresenter:
 
     def transfer_permission(self) -> str:
         return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PERMISSION
+
+    ##
+    def loja_overview(self, all_items: list[ItemLojaEntity], balance: int, **kwargs) -> str:
+        items = ""
+        for item in all_items:
+            if item.amount > 0 or item.amount == -1:
+                preco_item = item.valor
+
+                items += MSG.LOJA_OVERVIEW_ITEM.format(
+                    id=item.cod,
+                    item=item.nome,
+                    price=preco_item,
+                    description=item.descricao,
+                    amount=f": Quantidade Disponível: {item.amount}" if item.amount > 0 else "",
+                )
+
+        text = MSG.LOJA_OVERVIEW.format(
+            balance=balance,
+            items=items,
+        )
+
+        return text
+
+    def loja_wallet_not_found(self, **kwargs) -> str:
+        return MSG.LOJA_WALLET_NOT_FOUND

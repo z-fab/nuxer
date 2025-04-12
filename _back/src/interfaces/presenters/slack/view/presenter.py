@@ -1,6 +1,7 @@
 from loguru import logger
 
-from interfaces.presenters.hints import FabzendaHints
+from interfaces.presenters.hints import FabbankHints, FabzendaHints
+from interfaces.presenters.slack.view.fabbank import FabbankSlackPresenter
 from interfaces.presenters.slack.view.fabzenda import FabzendaSlackPresenter
 from shared.dto.use_case_response import UseCaseResponse
 
@@ -8,7 +9,15 @@ from shared.dto.use_case_response import UseCaseResponse
 class ViewPresenter:
     def __init__(self):
         self.fabzenda = FabzendaSlackPresenter()
+        self.fabbank = FabbankSlackPresenter()
         self._registry = {
+            FabbankHints.LOJA_BUY_SUCCESS: self.fabbank.loja_buy_success,
+            FabbankHints.LOJA_BUY_ADMIN: self.fabbank.loja_buy_admin,
+            # FabbankHints.LOJA_BUY_ERROR: self.fabbank.loja_buy_error,
+            # FabbankHints.LOJA_INSUFFICIENT_BALANCE: self.fabbank.loja_insufficient_balance,
+            # FabbankHints.LOJA_ITEM_PRICE_CHANGED: self.fabbank.loja_item_price_changed,
+            # FabbankHints.LOJA_ITEM_UNAVAILABLE: self.fabbank.loja_item_unavailable,
+            ##
             FabzendaHints.FAZENDA_OVERVIEW: self.fabzenda.fazenda_overview,
             FabzendaHints.FAZENDA_OVERVIEW_VAZIA: self.fabzenda.fazenda_overview_vazia,
             FabzendaHints.FAZENDA_OVERVIEW_DETALHE_ANIMAL: self.fabzenda.fazenda_overview_detalhe_animal,

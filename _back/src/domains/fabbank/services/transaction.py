@@ -11,6 +11,7 @@ class TransactionService:
         self.transaction_repository = TransactionRepository(db_context)
         self.wallet_repository = WalletRepository(db_context)
 
+    # Método para transferir moedas entre wallets
     def transfer_coins(self, from_id: str, to_id: str, value: int, description: str) -> ServiceResponse:
         wallet_from = self.wallet_repository.get_wallet_by_user_id(from_id)
         wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
@@ -79,7 +80,7 @@ class TransactionService:
         result = self.transaction_repository.create_transaction(wallet_from, wallet_to, value, description)
         return result
 
-    #####
+    # Método para alterar o saldo de uma wallet
     def change_coins(self, to_id: str, value: int, description: str) -> ServiceResponse:
         # Obter a wallet
         wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
