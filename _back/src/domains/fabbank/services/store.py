@@ -77,6 +77,11 @@ class StoreService:
         reserva_real.value = str(int(reserva_real.value) - item.valor)
         self.config_repository.save_config(reserva_real)
 
+        # Update item amount
+        if item.amount > 0:
+            item.amount -= 1
+            self.item_repository.save_item(item)
+
         return ServiceResponse(
             success=True,
             data={"item": item},
@@ -88,7 +93,7 @@ class StoreService:
 
         # Validate if the wallet exists
         if not wallet:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WALLET_NOT_FOUND)
+            return ServiceResponse(success=False, error=FabbankHints.LOJA_WALLET_NOT_FOUND)
 
         # Validate if the item is available
         if not item or item.amount == 0 or not item.enable:

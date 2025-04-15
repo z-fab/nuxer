@@ -23,6 +23,7 @@ class FabbankHints(Enum):
     LOJA_BUY_SUCCESS = 36
     LOJA_BUY_ERROR = 37
     LOJA_BUY_ADMIN = 38
+    LOJA_OPTIONS = 39
 
 
 class FabzendaHints(Enum):

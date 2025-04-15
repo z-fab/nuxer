@@ -21,6 +21,7 @@ class MessagePresenter:
             FabbankHints.TRANSFER_ERROR: self.fabbank.transfer_error,
             FabbankHints.TRANSFER_PERMISSION_DENIED: self.fabbank.transfer_permission,
             ##
+            FabbankHints.LOJA_OPTIONS: self.fabbank.loja_options,
             FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
         }
 

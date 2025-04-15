@@ -69,6 +69,10 @@ class FabbankSlackPresenter:
         return MSG.TEMPLATE_FABBANK_TRANSFER_ERROR_PERMISSION
 
     ##
+
+    def loja_options(self, **kwargs) -> str:
+        return MSG.LOJA_OPTIONS
+
     def loja_overview(self, all_items: list[ItemLojaEntity], balance: int, **kwargs) -> str:
         items = ""
         for item in all_items:

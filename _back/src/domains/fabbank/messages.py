@@ -78,11 +78,20 @@ Ops, você não tem permissão para realizar essa transferência :warning:
 
 ### FABBANK LOJA ###
 
-LOJA_OVERVIEW = """
+LOJA_OPTIONS = """
 # Vendinha do Uxer 🛍️
+A melhor, maior e única loja do mundo que aceita Fabcoins! Preços atualizados a todo momento.
+: Clique no Botão abaixo para acessar
+.
+<🛍️ Entrar na Vendinha(fabbank)[opt=ver_loja]P>
+.
+"""
+
+LOJA_OVERVIEW = """
 A melhor, maior e única loja do mundo que aceita Fabcoins! Preços atualizados a todo momento.
 > Seu saldo: `F₵ {balance}`
 --
+.
 {items}
 """
 
@@ -90,22 +99,16 @@ LOJA_OVERVIEW_ITEM = """
 [ cod: *{id}* ] {item} `F₵ {price}`
 : {description}
 {amount}
-<🛒 Comprar(fabbank)[opt=comprar,id={id},preco={price}]>
+<🛒 Comprar(fabbank)[opt=comprar,id={id},preco={price}]P>
+.
 --
+.
 """
 
 LOJA_NOTIFICATION_BUY = """
-# Item Comprado 🛒
 {apelido}, você comprou um item da loja com sucesso!
 > {item} por `F₵ {price}`
 : Já notifiquei o fabs e em breve o item será enviado.
-"""
-
-LOJA_NOTIFICATION_ERROR = """
-# Ops, item não comprado 🛒
-{apelido}, não foi possível realizar a compra do seu item. Verifique seu saldo ou se o preço do item não foi alterado
-> {item} por `F₵ {price}`
-: Para verificar seu saldo, utilize o comando `!fb` `saldo` e para verificar os itens com preço atualizado, utilize o comando `!fb` `loja`
 """
 
 LOJA_NOTIFICATION_BUY_ADMIN = """
@@ -114,6 +117,27 @@ LOJA_NOTIFICATION_BUY_ADMIN = """
 {user_from} comprou um item da loja.
 > {item} por `F₵ {price}` em {data}
 --
+"""
+
+LOJA_BUY_ERROR = """
+{apelido}, não foi possível realizar a compra do seu item. Verifique seu saldo ou se o preço do item não foi alterado
+> {item} por `F₵ {price}`
+: Para verificar seu saldo, utilize o comando `!fb` `saldo` e para verificar os itens com preço atualizado, utilize o comando `!fb` `loja`
+"""
+
+LOJA_INSUFFICIENT_BALANCE = """
+Ops, parece que você não tem saldo suficiente para realizar a compra :warning:
+: Verifique o saldo da sua Wallet com o comando `!fb` `saldo`
+"""
+
+LOJA_ITEM_PRICE_CHANGED = """
+Ops, parece que o preço do item que você tentou comprar foi alterado :warning:
+: Verifique os preços atualizados com o comando `!fb` `loja`
+"""
+
+LOJA_ITEM_UNAVAILABLE = """
+Ops, parece que o item que você tentou comprar não está mais disponível :warning:
+: Verifique os itens disponíveis com o comando `!fb` `loja`
 """
 
 LOJA_WALLET_NOT_FOUND = """

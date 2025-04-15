@@ -11,12 +11,14 @@ class ViewPresenter:
         self.fabzenda = FabzendaSlackPresenter()
         self.fabbank = FabbankSlackPresenter()
         self._registry = {
+            FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
             FabbankHints.LOJA_BUY_SUCCESS: self.fabbank.loja_buy_success,
             FabbankHints.LOJA_BUY_ADMIN: self.fabbank.loja_buy_admin,
-            # FabbankHints.LOJA_BUY_ERROR: self.fabbank.loja_buy_error,
-            # FabbankHints.LOJA_INSUFFICIENT_BALANCE: self.fabbank.loja_insufficient_balance,
-            # FabbankHints.LOJA_ITEM_PRICE_CHANGED: self.fabbank.loja_item_price_changed,
-            # FabbankHints.LOJA_ITEM_UNAVAILABLE: self.fabbank.loja_item_unavailable,
+            FabbankHints.LOJA_BUY_ERROR: self.fabbank.loja_buy_error,
+            FabbankHints.LOJA_INSUFFICIENT_BALANCE: self.fabbank.loja_insufficient_balance,
+            FabbankHints.LOJA_ITEM_PRICE_CHANGED: self.fabbank.loja_item_price_changed,
+            FabbankHints.LOJA_ITEM_UNAVAILABLE: self.fabbank.loja_item_unavailable,
+            FabbankHints.LOJA_WALLET_NOT_FOUND: self.fabbank.loja_wallet_not_found,
             ##
             FabzendaHints.FAZENDA_OVERVIEW: self.fabzenda.fazenda_overview,
             FabzendaHints.FAZENDA_OVERVIEW_VAZIA: self.fabzenda.fazenda_overview_vazia,

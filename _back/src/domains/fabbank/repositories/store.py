@@ -9,7 +9,7 @@ class StoreRepository:
 
     def get_all_enabled_items(self) -> list[ItemLojaEntity] | list[None]:
         with self._db_session() as session:
-            orm = session.query(ItemLojaORM).filter(ItemLojaORM.enable).all()
+            orm = session.query(ItemLojaORM).filter(ItemLojaORM.enable).order_by(ItemLojaORM.cod).all()
             return [ItemLojaEntity.model_validate(w) for w in orm]
 
     def get_item_by_cod(self, cod: str) -> ItemLojaEntity | None:
@@ -18,3 +18,16 @@ class StoreRepository:
             if not orm:
                 return None
             return ItemLojaEntity.model_validate(orm)
+
+    def save_item(self, item: ItemLojaEntity) -> bool:
+        with self._db_session() as session:
+            orm = session.query(ItemLojaORM).filter(ItemLojaORM.cod == item.cod).first()
+
+            if not orm:
+                return False
+
+            orm.amount = item.amount
+            orm.enable = item.enable
+
+            session.commit()
+            return True
