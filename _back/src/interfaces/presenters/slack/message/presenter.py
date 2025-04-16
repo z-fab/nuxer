@@ -1,13 +1,15 @@
 from loguru import logger
 
-from interfaces.presenters.hints import FabbankHints
+from interfaces.presenters.hints import FabbankHints, FabzendaHints
 from interfaces.presenters.slack.message.fabbank import FabbankSlackPresenter
+from interfaces.presenters.slack.message.fabzenda import FabzendaSlackPresenter
 from shared.dto.use_case_response import UseCaseResponse
 
 
 class MessagePresenter:
     def __init__(self):
         self.fabbank = FabbankSlackPresenter()
+        self.fabzenda = FabzendaSlackPresenter()
         self._registry = {
             FabbankHints.BALANCE: self.fabbank.balance,
             FabbankHints.BALANCE_ADMIN: self.fabbank.balance_admin,
@@ -23,6 +25,8 @@ class MessagePresenter:
             ##
             FabbankHints.LOJA_OPTIONS: self.fabbank.loja_options,
             FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
+            ##
+            FabzendaHints.FAZENDA_OPTIONS: self.fabzenda.fabzenda_option,
         }
 
     def render(self, response: UseCaseResponse, presenter_hint: str) -> str:

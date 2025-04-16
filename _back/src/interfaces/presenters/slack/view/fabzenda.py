@@ -4,6 +4,7 @@ from domains.fabzenda import messages as MSG
 from domains.fabzenda.entities.animal_modifier import AnimalModifierEntity
 from domains.fabzenda.entities.animal_type import AnimalTypeEntity
 from domains.fabzenda.entities.user_animal import UserAnimalEntity
+from domains.fabzenda.entities.user_farm import UserFarmEntity
 from domains.user.entities.user import UserEntity
 
 
@@ -14,8 +15,13 @@ class FabzendaSlackPresenter:
     def fazenda_overview_vazia(self, apelido: str, **kwargs) -> str:
         return "Minha Fabzenda", MSG.FAZENDA_OVERVIEW_VAZIA.format(apelido=apelido)
 
-    def fazenda_overview(self, user_animals: list[UserAnimalEntity], user: UserEntity, **kwargs) -> str:
+    def fazenda_overview(
+        self, user_animals: list[UserAnimalEntity], user: UserEntity, user_farm: UserFarmEntity, **kwargs
+    ) -> str:
         slots_fabzenda = [f"{animal.animal_type.emoji}" for animal in user_animals]
+
+        while len(slots_fabzenda) < user_farm.max_animals:
+            slots_fabzenda.append("[⊹]")
 
         animals_text = ""
         for animal in user_animals:
@@ -64,7 +70,11 @@ class FabzendaSlackPresenter:
             )
 
         return "Fabzenda 🏕️", MSG.FAZENDA_OVERVIEW.format(
-            apelido=user.apelido, slots=" ".join(slots_fabzenda), animals=animals_text
+            apelido=user.apelido,
+            slots=" ‧ ".join(slots_fabzenda),
+            animals=animals_text,
+            num_animals=len(user_animals),
+            total_animals=user_farm.max_animals,
         )
 
     def fazenda_overview_detalhe_animal(self, user_animal: UserAnimalEntity, **kwargs) -> str:

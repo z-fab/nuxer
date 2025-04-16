@@ -36,7 +36,6 @@ class EnterrarAnimal:
         # Removendo o dinheiro da conta do usuário
         transaction_service = TransactionService(db)
         response_transaction = transaction_service.change_coins(
-            from_id="0",
             to_id=user.id,
             value=(-user_animal.burial_cost),
             description=f"[Fabzenda] Enterrar Fabichinho: {user_animal.name}",

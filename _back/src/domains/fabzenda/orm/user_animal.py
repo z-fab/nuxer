@@ -11,7 +11,7 @@ class UserAnimalORM(Base):
     __table_args__ = {"schema": "fabzenda"}
 
     animal_id = Column(Integer, primary_key=True)
-    user_id = Column(String(50), ForeignKey("public.users.id"))
+    user_id = Column(Integer, ForeignKey("public.users.id"))
     type_id = Column(Integer, ForeignKey("fabzenda.animal_types.type_id"))
     name = Column(String(100))
     purchase_date = Column(DateTime, default=datetime.now)

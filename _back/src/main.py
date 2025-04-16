@@ -1,6 +1,7 @@
 import argparse
 
 from interfaces.runners.assistant_runner import init_assistant
+from interfaces.runners.schedule_runner import init_schedule
 from shared.config.logger import setup_logger
 
 if __name__ == "__main__":
@@ -22,5 +23,4 @@ if __name__ == "__main__":
         init_assistant()
 
     elif args.runner == "schedule":
-        # init_schedule()
-        pass
+        init_schedule()

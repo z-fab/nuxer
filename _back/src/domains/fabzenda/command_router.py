@@ -6,6 +6,7 @@ from domains.fabzenda.use_cases.detalhe_animal_fazenda import DetalheAnimalFazen
 from domains.fabzenda.use_cases.enterrar_animal import EnterrarAnimal
 from domains.fabzenda.use_cases.ver_celeiro import VerCeleiro
 from domains.fabzenda.use_cases.ver_fabzenda import VerFabzenda
+from interfaces.presenters.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 
@@ -38,6 +39,6 @@ def handle_fabzenda(input_data: SlackCommandInput, set_status: callable) -> UseC
             return UseCaseResponse(
                 success=True,
                 notification=[
-                    {"presenter_hint": "fabzenda.options"},
+                    {"presenter_hint": FabzendaHints.FAZENDA_OPTIONS},
                 ],
             )

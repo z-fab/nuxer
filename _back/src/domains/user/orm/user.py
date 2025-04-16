@@ -1,6 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String  # noqa: I001
 from sqlalchemy.orm import relationship
-
 from shared.infrastructure.db_base import Base
 
 
@@ -28,9 +27,11 @@ class UserORM(Base):
 def setup_relationships():
     from domains.fabbank.orm.wallet import WalletORM
     from domains.fabzenda.orm.user_animal import UserAnimalORM
+    from domains.fabzenda.orm.user_farm import UserFarmORM
 
     UserORM.wallet = relationship(WalletORM, back_populates="user", uselist=False)
     UserORM.animals = relationship(UserAnimalORM, back_populates="user", uselist=False)
+    UserORM.farm = relationship(UserFarmORM, back_populates="user", uselist=False)
 
 
 setup_relationships()

@@ -36,7 +36,6 @@ class AbduzirAnimal:
         # Adicionando o dinheiro da conta do usuário
         transaction_service = TransactionService(db)
         response_transaction = transaction_service.change_coins(
-            from_id="0",
             to_id=user.id,
             value=user_animal.expire_value,
             description=f"[Fabzenda] Fabichinho Abduzido: {user_animal.name}",

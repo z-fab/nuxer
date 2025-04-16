@@ -15,7 +15,7 @@ FAZENDA_OVERVIEW_VAZIA = """
 """
 
 FAZENDA_OVERVIEW = """
-{apelido}, aqui está sua Fabzenda!
+{apelido}, aqui está sua Fabzenda! Você tem `{num_animals}` fabichinhos (Max: {total_animals}).
 > {slots}
 {animals}
 """

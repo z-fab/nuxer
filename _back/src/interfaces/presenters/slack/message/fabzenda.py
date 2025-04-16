@@ -8,4 +8,4 @@ class FabzendaSlackPresenter:
         self.now = now or datetime.now()
 
     def fabzenda_option(self) -> str:
-        return MSG.TEMPLATE_FABZENDA_OPTIONS
+        return MSG.FABZENDA_OPTIONS

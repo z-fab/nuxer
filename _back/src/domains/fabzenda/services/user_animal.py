@@ -5,6 +5,7 @@ from domains.fabzenda.entities.user_animal import UserAnimalEntity
 from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.animal_modifier import AnimalModifierService
+from domains.fabzenda.services.user_farm import UserFarmService
 from domains.user.repositories.user import UserRepository
 from interfaces.presenters.hints import FabzendaHints
 from shared.dto.service_response import ServiceResponse
@@ -20,6 +21,7 @@ class UserAnimalService:
 
         self.wallet_service = WalletService(db_context)
         self.animal_modifier_service = AnimalModifierService(db_context)
+        self.user_farm_service = UserFarmService(db_context)
 
     def get_user_animals(self, user_id: int) -> ServiceResponse:
         user = self.user_repository.get_user_by_id(user_id)
@@ -80,9 +82,10 @@ class UserAnimalService:
         return self._can_buy_animal_entity(user_id=user_id, animal_type=animal_type)
 
     def _can_buy_animal_entity(self, user_id: int, animal_type: UserAnimalEntity) -> ServiceResponse:
-        max_animals = 3
         user_animals = self.user_animal_repository.get_user_animals_alive_by_user_id(user_id)
         wallet = self.wallet_service.get_balance_info(user_id).data["user_wallet"]
+        user_farm = self.user_farm_service.get_user_farm(user_id).data["user_farm"]
+        max_animals = user_farm.max_animals
 
         if len(user_animals) >= max_animals:
             return ServiceResponse(

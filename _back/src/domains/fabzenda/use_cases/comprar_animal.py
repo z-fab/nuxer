@@ -36,7 +36,6 @@ class ComprarAnimal:
         # Removendo o dinheiro da conta do usuário
         transaction_service = TransactionService(db)
         response_transaction = transaction_service.change_coins(
-            from_id="0",
             to_id=user.id,
             value=(-animal_type.base_price),
             description=f"[Fabzenda] Adoção Fabichinho: {animal_type.name}",

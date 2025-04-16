@@ -24,7 +24,12 @@ class UserAnimalRepository:
 
     def get_user_animals_alive_by_user_id(self, user_id: str) -> list[UserAnimalEntity]:
         with self._db_session() as session:
-            orm = session.query(UserAnimalORM).filter(UserAnimalORM.user_id == user_id, UserAnimalORM.is_alive).all()
+            orm = (
+                session.query(UserAnimalORM)
+                .filter(UserAnimalORM.user_id == user_id, UserAnimalORM.is_alive)
+                .order_by(UserAnimalORM.animal_id)
+                .all()
+            )
             if not orm:
                 return []
 
