@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from interfaces.presenters.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
@@ -14,8 +16,10 @@ class DetalheAnimalFazenda:
         user_animal = user_animal_repository.get_user_animal_by_id(self.input.args[1])
 
         if not user_animal:
+            logger.error(f"[Detalhe Animal] Animal não encontrado: {self.input.args[1]}")
             return UseCaseResponse(success=False)
 
+        logger.info(f"[Detalhe Animal] {user_animal}")
         return UseCaseResponse(
             success=True,
             data={"user_animal": user_animal},

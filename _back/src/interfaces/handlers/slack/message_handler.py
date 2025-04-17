@@ -66,7 +66,7 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
             for notification in use_case_response.notification:
                 if notification.get("presenter_hint"):
                     presenter = MessagePresenter()
-                    rendered_message = presenter.render(use_case_response, notification.get("presenter_hint"))
+                    rendered_message = presenter.render(use_case_response.data, notification.get("presenter_hint"))
 
                     # Notifica o usuário
                     if not notification.get("user"):

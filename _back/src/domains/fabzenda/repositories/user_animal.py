@@ -22,6 +22,14 @@ class UserAnimalRepository:
 
             return UserAnimalEntity.model_validate(orm)
 
+    def get_all_user_animals_alive(self) -> list[UserAnimalEntity]:
+        with self._db_session() as session:
+            orm = session.query(UserAnimalORM).filter(UserAnimalORM.is_alive).order_by(UserAnimalORM.animal_id).all()
+            if not orm:
+                return []
+
+            return [UserAnimalEntity.model_validate(animal) for animal in orm]
+
     def get_user_animals_alive_by_user_id(self, user_id: str) -> list[UserAnimalEntity]:
         with self._db_session() as session:
             orm = (

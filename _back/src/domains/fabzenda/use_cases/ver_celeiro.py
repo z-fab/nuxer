@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabbank.repositories.wallet import WalletRepository
 from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
 from interfaces.presenters.hints import FabzendaHints
@@ -18,13 +20,16 @@ class VerCeleiro:
         wallet = wallet_repository.get_wallet_by_slack_id(self.input.user_id)
 
         if not wallet:
+            logger.error(f"[Ver Celeiro] Carteira não encontrada para o usuário: {self.input.user_id}")
             return UseCaseResponse(
                 success=False, notifications=[{"presenter_hint": FabzendaHints.CELEIRO_WALLET_NOT_FOUND}]
             )
 
         if not animal_types:
+            logger.error(f"[Ver Celeiro] Animais não encontrados para o usuário: {self.input.user_id}")
             return UseCaseResponse(success=False)
 
+        logger.info(f"[Ver Celeiro] {animal_types}")
         return UseCaseResponse(
             success=True,
             data={

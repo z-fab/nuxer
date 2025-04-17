@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
@@ -25,6 +27,7 @@ class AbduzirAnimal:
         response_can_abduction = user_animal_service._can_abduction_animal_entity(user_animal=user_animal)
 
         if not response_can_abduction.success:
+            logger.error(f"[Abduzir Animal] Erro ao abduzir animal: {response_can_abduction}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -42,6 +45,7 @@ class AbduzirAnimal:
         )
 
         if not response_transaction.success:
+            logger.error(f"[Abduzir Animal] Erro ao abduzir animal: {transaction_service}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -54,6 +58,7 @@ class AbduzirAnimal:
         service_response = user_animal_service._abduction_animal_entity(user_animal=user_animal)
 
         if not service_response.success:
+            logger.error(f"[Abduzir Animal] Erro ao abduzir animal: {service_response}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -63,6 +68,7 @@ class AbduzirAnimal:
             )
 
         service_response.data["apelido"] = user.apelido
+        logger.info(f"[Abduzir Animal] {service_response.data}")
         return UseCaseResponse(
             success=True,
             data=service_response.data,

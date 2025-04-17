@@ -300,3 +300,26 @@ TEMPLATE_FABZENDA_GENERIC_ERROR = """
 Algo deu errado e não consegui atuar na Fabzenda 🫠
 : Tente novamente e, se não der certo, entre em contato com o Fabs.
 """
+
+###
+
+NOTIFICATION_ANIMAL_SICK = """
+{apelido}, seu fabichinho {emoji} *{name}* está doente! 😵‍💫
+: Ele precisa de comida para não morrer. Alimente-o antes que seja tarde demais.
+.
+<🥘 Alimentar - F₵ {feeding_cost} (fabzenda)[opt=alimentar,id={id}]P> <🏕️ Ver Fabzenda(fabzenda)[opt=ver]>
+"""
+
+NOTIFICATION_ANIMAL_DEAD = """
+{apelido}, seu fabichinho {emoji} *{name}* morreu! :skull:
+: A fome venceu e ele não conseguiu sobreviver. Agora você precisa enterrá-lo
+.
+<🏕️ Ver Fabzenda(fabzenda)[opt=ver]>
+"""
+
+NOTIFICATION_CHANNEL_ANIMAL_DEAD = """
+# Jornal Agronews 📰
+Atenção, temos uma notícia triste para compartilhar com vocês.
+> O fabichinho {emoji} *{name}* do usuário <@{slack_id}> faleceu. :skull:
+: Resistiu bravamente, mas não conseguiu sobreviver à fome
+"""

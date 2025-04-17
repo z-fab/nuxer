@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
@@ -25,6 +27,7 @@ class EnterrarAnimal:
         response_can_feed = user_animal_service._can_burial_animal_entity(user_id=user.id, user_animal=user_animal)
 
         if not response_can_feed.success:
+            logger.error(f"[Enterrar Animal] Erro ao enterrar animal: {response_can_feed}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -42,6 +45,7 @@ class EnterrarAnimal:
         )
 
         if not response_transaction.success:
+            logger.error(f"[Enterrar Animal] Erro ao enterrar animal: {transaction_service}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -54,6 +58,7 @@ class EnterrarAnimal:
         service_response = user_animal_service._burial_animal_entity(user_animal=user_animal)
 
         if not service_response.success:
+            logger.error(f"[Enterrar Animal] Erro ao enterrar animal: {service_response}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -63,6 +68,7 @@ class EnterrarAnimal:
             )
 
         service_response.data["apelido"] = user.apelido
+        logger.info(f"[Enterrar Animal] {service_response.data}")
         return UseCaseResponse(
             success=True,
             data=service_response.data,

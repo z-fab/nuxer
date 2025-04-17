@@ -56,7 +56,9 @@ def handle_action_event(payload: dict, client: WebClient) -> bool:
         for notification in use_case_response.notification:
             if notification.get("presenter_hint"):
                 presenter = ViewPresenter()
-                title_view, rendered_message = presenter.render(use_case_response, notification.get("presenter_hint"))
+                title_view, rendered_message = presenter.render(
+                    use_case_response.data, notification.get("presenter_hint")
+                )
 
                 # Notifica o usuário
                 if not notification.get("user"):

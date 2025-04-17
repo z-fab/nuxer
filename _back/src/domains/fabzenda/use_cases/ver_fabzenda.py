@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabzenda.services.user_animal import UserAnimalService
 from domains.fabzenda.services.user_farm import UserFarmService
 from domains.user.repositories.user import UserRepository
@@ -19,6 +21,7 @@ class VerFabzenda:
         user_farm_response = user_farm_service.get_user_farm(user_entity.id)
 
         if not user_entity:
+            logger.error(f"[Ver Fabzenda] Usuário não encontrado: {self.input.user_id}")
             return UseCaseResponse(success=False)
 
         user_animal_service = UserAnimalService(db)
@@ -26,6 +29,7 @@ class VerFabzenda:
         response = user_animal_service.get_user_animals(user_entity.id)
 
         if not response.success:
+            logger.error(f"[Ver Fabzenda] Erro ao buscar animais do usuário: {response}")
             return UseCaseResponse(
                 success=False,
                 notification=[
@@ -34,6 +38,7 @@ class VerFabzenda:
             )
 
         response.data["user_farm"] = user_farm_response.data["user_farm"]
+        logger.info(f"[Ver Fabzenda] {response.data}")
         return UseCaseResponse(
             success=True,
             data=response.data,

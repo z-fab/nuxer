@@ -1,9 +1,10 @@
+from enum import Enum
+
 from loguru import logger
 
 from interfaces.presenters.hints import FabbankHints, FabzendaHints
 from interfaces.presenters.slack.message.fabbank import FabbankSlackPresenter
 from interfaces.presenters.slack.message.fabzenda import FabzendaSlackPresenter
-from shared.dto.use_case_response import UseCaseResponse
 
 
 class MessagePresenter:
@@ -27,11 +28,15 @@ class MessagePresenter:
             FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
             ##
             FabzendaHints.FAZENDA_OPTIONS: self.fabzenda.fabzenda_option,
+            ##
+            FabzendaHints.NOTIFICATE_ANIMAL_DEAD: self.fabzenda.notificate_animal_dead,
+            FabzendaHints.NOTIFICATE_CHANNEL_ANIMAL_DEAD: self.fabzenda.notificate_channel_animal_dead,
+            FabzendaHints.NOTIFICATE_ANIMAL_SICK: self.fabzenda.notificate_animal_sick,
         }
 
-    def render(self, response: UseCaseResponse, presenter_hint: str) -> str:
+    def render(self, data: dict, presenter_hint: Enum) -> str:
         if presenter_hint in self._registry:
-            return self._registry[presenter_hint](**response.data)
+            return self._registry[presenter_hint](**data)
 
         logger.warning(f"Presenter hint '{presenter_hint}' não encontrado no registro.")
-        return response.message or "Não consegui entender o que você quis dizer."
+        return "Não consegui entender o que você quis dizer."

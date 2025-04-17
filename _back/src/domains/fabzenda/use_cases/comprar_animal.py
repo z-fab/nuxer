@@ -1,3 +1,5 @@
+from loguru import logger
+
 from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
@@ -25,6 +27,7 @@ class ComprarAnimal:
         response_can_buy = user_animal_service._can_buy_animal_entity(user_id=user.id, animal_type=animal_type)
 
         if not response_can_buy.success:
+            logger.error(f"[Comprar Animal] Erro ao comprar animal: {response_can_buy}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -42,6 +45,7 @@ class ComprarAnimal:
         )
 
         if not response_transaction.success:
+            logger.error(f"[Comprar Animal] Erro ao comprar animal: {transaction_service}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -56,6 +60,7 @@ class ComprarAnimal:
         )
 
         if not service_response.success:
+            logger.error(f"[Comprar Animal] Erro ao comprar animal: {service_response}")
             return UseCaseResponse(
                 success=False,
                 data={"apelido": user.apelido},
@@ -65,6 +70,7 @@ class ComprarAnimal:
             )
 
         service_response.data["user"] = user
+        logger.info(f"[Comprar Animal] {service_response.data}")
         return UseCaseResponse(
             success=True,
             data=service_response.data,
