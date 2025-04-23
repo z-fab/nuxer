@@ -58,4 +58,4 @@ class ViewPresenter:
             return self._registry[presenter_hint](**data)
 
         logger.warning(f"Presenter hint '{presenter_hint}' não encontrado no registro.")
-        return "Não consegui entender o que você quis dizer."
+        return "Nuxer", "Não consegui entender o que você quis dizer."

@@ -3,10 +3,10 @@ from datetime import timedelta
 
 from _back.src.shared.config.settings import SETTINGS as S
 from fastapi import APIRouter, Depends, HTTPException
+from services.auth_service import create_access_token, create_magic_link, current_user, verify_magic_link
 
 from models.entities.token_entity import MagicLinkRequest
 from models.entities.user_entity import UserEntity
-from services.auth_service import create_access_token, create_magic_link, current_user, verify_magic_link
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

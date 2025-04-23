@@ -35,9 +35,20 @@ def text_to_blocks(text: str) -> list:
             }
         elif context_match := re.match(r"^:\s*(.*)$", line):
             # Context
+            context_content = context_match.group(1)
+            # Split by <img ...> and keep the delimiters
+            parts = re.split(r"(<img\s+[^>]+>)", context_content)
+            elements = []
+            for part in parts:
+                img_match = re.match(r"<img\s+([^>]+)>", part)
+                if img_match:
+                    img_url = img_match.group(1).strip()
+                    elements.append({"type": "image", "image_url": img_url, "alt_text": "imagem"})
+                elif part.strip():
+                    elements.append({"type": "mrkdwn", "text": part.strip()})
             struct = {
                 "type": "context",
-                "elements": [{"type": "mrkdwn", "text": context_match.group(1)}],
+                "elements": elements,
             }
         # Nova condição para linhas com o formato "texto || <botão>"
         elif section_button_match := re.match(r"^(.*?)\s*\|\|\s*<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>$", line):
@@ -65,6 +76,15 @@ def text_to_blocks(text: str) -> list:
                 button["style"] = "danger"
 
             struct = {"type": "section", "text": {"type": "mrkdwn", "text": section_text}, "accessory": button}
+        # Nova condição para linhas com o formato "texto || <img URL>"
+        elif section_img_match := re.match(r"^(.*?)\s*\|\|\s*<img\s+(.+)>$", line):
+            section_text = section_img_match.group(1).strip()
+            img_url = section_img_match.group(2).strip()
+            struct = {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": section_text},
+                "accessory": {"type": "image", "image_url": img_url, "alt_text": "imagem"},
+            }
         elif re.search(r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>", line):
             # Buttons <label(action_id)[params]P> - multiple allowed in one line, P for primary style
             button_matches = re.findall(r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>", line)

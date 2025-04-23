@@ -32,6 +32,8 @@ class MessagePresenter:
             FabzendaHints.NOTIFICATE_ANIMAL_DEAD: self.fabzenda.notificate_animal_dead,
             FabzendaHints.NOTIFICATE_CHANNEL_ANIMAL_DEAD: self.fabzenda.notificate_channel_animal_dead,
             FabzendaHints.NOTIFICATE_ANIMAL_SICK: self.fabzenda.notificate_animal_sick,
+            FabzendaHints.NOTIFICATE_CHANNEL_LOTTERY: self.fabzenda.notificate_channel_lottery,
+            FabzendaHints.NOTIFICATE_LOTTERY: self.fabzenda.notificate_lottery,
         }
 
     def render(self, data: dict, presenter_hint: Enum) -> str:

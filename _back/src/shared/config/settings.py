@@ -40,6 +40,7 @@ class Settings(BaseSettings):
 
 SETTINGS = Settings()
 
-ROOT_DIR = Path(__file__).parent.parent.parent
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
 FILE_DIR = ROOT_DIR / "files"
 MODELS_DIR = ROOT_DIR / "models"
+ASSETS_DIR = ROOT_DIR / "assets"

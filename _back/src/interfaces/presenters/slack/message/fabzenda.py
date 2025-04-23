@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from domains.fabzenda import messages as MSG
+from domains.fabzenda.entities.animal_type import AnimalTypeEntity
 from domains.fabzenda.entities.user_animal import UserAnimalEntity
 
 
@@ -33,3 +34,38 @@ class FabzendaSlackPresenter:
             feeding_cost=animal.feeding_cost,
             id=animal.animal_id,
         )
+
+    def notificate_channel_lottery(self, winning_types: list[AnimalTypeEntity], winners: dict, **kwargs) -> str:
+        lottery_result = " ‧ ".join([animal.emoji for animal in winning_types])
+        if len(winners) == 0:
+            return MSG.NOTIFICATION_CHANNEL_LOTERY_NONE.format(
+                result=lottery_result,
+            )
+
+        total_reward = sum([info["total_reward"] for info in winners.values()])
+
+        ganhadores = ""
+        for _, info in winners.items():
+            ganhadores += f"> {info['animals'][0].user.nome} ganhou `F₵ {info['total_reward']}` com {' ‧ '.join([animal.animal_type.emoji for animal in info['animals']])}\n"
+
+        n_ganhadores = f"{len(winners)} ganhador" if len(winners) == 1 else f"{len(winners)} ganhadores"
+
+        return MSG.NOTIFICATION_CHANNEL_LOTERY.format(
+            result=lottery_result, n_ganhadores=n_ganhadores, total_reward=total_reward, ganhadores=ganhadores
+        )
+
+    def notificate_lottery(self, info_winners: dict, **kwargs) -> str:
+        animals = " ‧ ".join([animal.animal_type.emoji for animal in info_winners["animals"]])
+        reward = info_winners["total_reward"]
+        apelido = info_winners["animals"][0].user.apelido
+
+        if info_winners["n_distinct_animals"] == 3:
+            bonus = "Sorte está do seu lado! Você conquistou um bônus de 15% por reunir 3 fabichinhos diferentes no sorteio!"
+        elif info_winners["n_distinct_animals"] == 4:
+            bonus = "Que sorte absurda! Você garantiu um bônus de 30% por ter conseguido 4 fabichinhos diferentes no sorteio!"
+        elif info_winners["n_distinct_animals"] == 5:
+            bonus = "Bônus épico! Você recebeu 2x o prêmio por ter conseguido 5 fabichinhos únicos no sorteio!"
+        else:
+            bonus = ""
+
+        return MSG.NOTIFICATION_LOTERY.format(apelido=apelido, reward=reward, result=animals, bonus=bonus)

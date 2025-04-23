@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
-
-from models.entities.wallet_entity import WalletEntity
 from repositories import fabbank_repository as fbr
 from services.auth_service import admin_role
+
+from models.entities.wallet_entity import WalletEntity
 
 # Criar o router com o prefixo /fabbank
 router = APIRouter(

@@ -259,35 +259,7 @@ ABDUCTION_SUCCESS = """
 <🏕️ Voltar para Fabzenda(fabzenda)[opt=ver]P>
 """
 
-### !!!!
-
-TEMPLATE_FABZENDA_LOTTERY_WIN = """
-# Resultado - Jogo do Fabichinhos 🎰
-{apelido}, parabéns! Você ganhou `F₵ {reward}` no sorteio do Fabichinhos!
-{bonus}
-"""
-
-TEMPLATE_FABZENDA_LOTTERY_RESULT = """
-# Resultado - Jogo do Fabichinhos 🎰
-<!channel> Atenção, atenção! O resultado do sorteio do Fabichinhos foi:
-.
-> {result}
-.
-Tivemos {n_ganhadores}, recebendo um total de `F₵ {total_reward}` em prêmios.
-{ganhadores}
-: Os ganhadores já foram notificados e o premio foi depositado em suas Wallets.
-"""
-
-TEMPLATE_FABZENDA_LOTTERY_RESULT_NONE = """
-# Resultado - Jogo do Fabichinhos 🎰
-Atenção, atenção! O resultado do sorteio do Fabichinhos foi:
-.
-> {result}
-.
-Não tivemos ganhadores nesse sorteio. 😿
-: Mas não desanime, o próximo pode ser o seu!
-"""
-
+#
 ###
 
 TEMPLATE_FABZENDA_FOUND_COIN = """
@@ -322,4 +294,31 @@ NOTIFICATION_CHANNEL_ANIMAL_DEAD = """
 Atenção, temos uma notícia triste para compartilhar com vocês.
 > O fabichinho {emoji} *{name}* do usuário <@{slack_id}> faleceu. :skull:
 : Resistiu bravamente, mas não conseguiu sobreviver à fome
+"""
+
+NOTIFICATION_CHANNEL_LOTERY = """
+# Jornal Agronews 📰
+<!channel> Foi divulgado o resultado do Jogo dos Fabichinhos 🎰
+.
+> O resultado foi: {result}
+.
+Tivemos {n_ganhadores}, recebendo um total de `F₵ {total_reward}` em prêmios.
+{ganhadores}
+: O Jogo dos Fabichinhos é um jogo de sorte, totalmente aleatório, auditado pela Caixa Econômica Faberal.
+"""
+
+NOTIFICATION_CHANNEL_LOTERY_NONE = """
+# Jornal Agronews 📰
+<!channel> Foi divulgado o resultado do Jogo dos Fabichinhos 🎰
+.
+> O resultado foi: {result}
+.
+Não tivemos ganhadores nesse sorteio 🥲
+: Mas não desanime, o próximo pode ser o seu! O Jogo dos Fabichinhos é um jogo de sorte, totalmente aleatório, auditado pela Caixa Econômica Faberal.
+"""
+
+NOTIFICATION_LOTERY = """
+# Resultado - Jogo dos Fabichinhos 🎰
+{apelido}, parabéns! Você ganhou `F₵ {reward}` no sorteio com {result}!
+{bonus}
 """

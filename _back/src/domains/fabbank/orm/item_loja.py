@@ -7,7 +7,7 @@ class ItemLojaORM(Base):
     __tablename__ = "itens_loja"
     __table_args__ = {"schema": "fabbank"}
 
-    cod = Column(String, primary_key=True, autoincrement=True)
+    cod = Column(String, primary_key=True)
     nome = Column(String, nullable=True)
     descricao = Column(String, nullable=True)
     valor = Column(Integer, nullable=False)

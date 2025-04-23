@@ -4,18 +4,18 @@ from datetime import datetime, timedelta
 from math import floor
 
 from _back.src.fabbank.services.fabbank_service import FabBankService
-from loguru import logger
-
 from config.const import CONST_ERROR, CONST_MESSAGE, CONST_SLACK
 from externals.context import Context
-from models.entities.user_entity import UserEntity
-from models.fabzenda.entities.animal_type_entity import AnimalTypeEntity
-from models.fabzenda.entities.user_animal_entity import UserAnimalEntity
+from loguru import logger
 from repositories import fabbank_repository as fbr
 from repositories import fabzenda_repository as fzr
 from repositories.configs_repository import get_config_by_name
 from utils import fabzenda_utils as fabzenda_utils
 from utils import slack_utils as slack_utils
+
+from models.entities.user_entity import UserEntity
+from models.fabzenda.entities.animal_type_entity import AnimalTypeEntity
+from models.fabzenda.entities.user_animal_entity import UserAnimalEntity
 
 context = Context()
 

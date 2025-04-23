@@ -33,13 +33,6 @@ class UserAnimalEntity(BaseModel):
         return base
 
     @property
-    def reward(self) -> int:
-        base = self.animal_type.base_reward if self.animal_type else 0
-        if self.modifier:
-            return round(base * self.modifier.reward_multiplier)
-        return base
-
-    @property
     def lifespan(self) -> int:
         base = self.animal_type.lifespan if self.animal_type else 14
         if self.modifier:
