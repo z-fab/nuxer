@@ -32,8 +32,9 @@ class VerFabzenda:
             logger.error(f"[Ver Fabzenda] Erro ao buscar animais do usuário: {response}")
             return UseCaseResponse(
                 success=False,
+                data=response.data,
                 notification=[
-                    {"presenter_hint": FabzendaHints.FAZENDA_ERROR},
+                    {"presenter_hint": response.error},
                 ],
             )
 

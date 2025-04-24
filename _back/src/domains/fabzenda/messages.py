@@ -2,8 +2,16 @@ FABZENDA_OPTIONS = """
 # Menu da Fabzendinha 🌱
 : Selecione uma das opções abaixo
 .
- <🏕️ Minha Fabzenda(fabzenda)[opt=ver]P> <🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro]> <🏪 Oinc Store(fabzenda)[opt=store]>
+ <🏕️ Minha Fabzenda(fabzenda)[opt=ver]P> <🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro,page=1]> <🏪 Oinc Store(fabzenda)[opt=store]>
 .
+"""
+
+FABZENDA_PAGINADOR_ANTERIOR = """
+<⬅️ Página Anterior(fabzenda)[opt={command},page={page}]P>
+"""
+
+FABZENDA_PAGINADOR_PROXIMO = """
+<Próxima Página ➡️(fabzenda)[opt={command},page={page}]P>
 """
 
 ####
@@ -103,6 +111,8 @@ A melhor, maior e único lugar que você pode comprar Fabichinhos para sua Fabze
 --
 .
 {animals}
+.
+{paginador}
 """
 
 CELEIRO_OVERVIEW_ANIMALS = """

@@ -140,9 +140,13 @@ class FabzendaSlackPresenter:
 
         return "Fabzenda 🏕️", animals_text
 
-    def celeiro_overview(self, animal_types: list[UserAnimalEntity], balance: int, **kwargs) -> str:
+    def celeiro_overview(self, animal_types: list[UserAnimalEntity], balance: int, atual_page: int, **kwargs) -> str:
+        per_page = 10
+        total_pages = len(animal_types) // per_page + (1 if len(animal_types) % per_page > 0 else 0)
+        animal_types_page = animal_types[per_page * (atual_page - 1) : per_page * atual_page]
+
         animals_text = ""
-        for animal in animal_types:
+        for animal in animal_types_page:
             animals_text += MSG.CELEIRO_OVERVIEW_ANIMALS.format(
                 id=animal.type_id,
                 name=animal.name,
@@ -151,9 +155,23 @@ class FabzendaSlackPresenter:
                 description=animal.description,
             )
 
+        paginador = ""
+        if atual_page > 1:
+            paginador += MSG.FABZENDA_PAGINADOR_ANTERIOR.format(
+                command="celeiro",
+                page=atual_page - 1,
+            )
+
+        if atual_page < total_pages:
+            paginador += MSG.FABZENDA_PAGINADOR_PROXIMO.format(
+                command="celeiro",
+                page=atual_page + 1,
+            )
+
         return "Celeiro Canto Bão 🌾", MSG.CELEIRO_OVERVIEW.format(
             balance=balance,
             animals=animals_text,
+            paginador=paginador.replace("\n", ""),
         )
 
     def celeiro_detalhe_animal(self, animal_type: UserAnimalEntity, **kwargs) -> str:

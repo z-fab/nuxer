@@ -35,6 +35,7 @@ class VerCeleiro:
             data={
                 "animal_types": animal_types,
                 "balance": wallet.balance,
+                "atual_page": int(self.input.args[1]) if len(self.input.args) > 1 else 1,
             },
             notification=[
                 {"presenter_hint": FabzendaHints.CELEIRO_OVERVIEW},
