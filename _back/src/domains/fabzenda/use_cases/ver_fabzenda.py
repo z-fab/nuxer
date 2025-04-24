@@ -1,7 +1,7 @@
 from loguru import logger
 
+from domains.fabzenda.services.item import ItemService
 from domains.fabzenda.services.user_animal import UserAnimalService
-from domains.fabzenda.services.user_farm import UserFarmService
 from domains.user.repositories.user import UserRepository
 from interfaces.presenters.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
@@ -17,8 +17,8 @@ class VerFabzenda:
         user_repository = UserRepository(db)
         user_entity = user_repository.get_user_by_slack_id(self.input.user_id)
 
-        user_farm_service = UserFarmService(db)
-        user_farm_response = user_farm_service.get_user_farm(user_entity.id)
+        item_service = ItemService(db)
+        qtd_additional = item_service.get_additional_animals_slot_by_user(user_entity.id)
 
         if not user_entity:
             logger.error(f"[Ver Fabzenda] Usuário não encontrado: {self.input.user_id}")
@@ -38,7 +38,7 @@ class VerFabzenda:
                 ],
             )
 
-        response.data["user_farm"] = user_farm_response.data["user_farm"]
+        response.data["qtd_additional"] = qtd_additional.data["n_animals"]
         logger.info(f"[Ver Fabzenda] {response.data}")
         return UseCaseResponse(
             success=True,

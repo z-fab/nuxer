@@ -170,7 +170,7 @@ def upgrade() -> None:
         INSERT INTO config (id,name,value) VALUES
         (2,'MAX_ANIMALS','3'),
         (1,'RESERVA_REAL','350'),
-        (3,'N_LOTTERY','5'); 
+        (3,'N_LOTTERY','3'); 
     """)
     op.execute(seed_config)
 

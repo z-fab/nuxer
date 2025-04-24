@@ -5,34 +5,39 @@ x-service-base: &service-base
   restart: unless-stopped
   volumes:
     - ../logs:/app/logs
-  environment:
-    - PYTHONUNBUFFERED=1
-    - DATABASE_HOST=host.docker.internal
 
 services:
-  api:
-    <<: *service-base
-    command: python main.py api
-    ports:
-      - "8000:8000"
+  # api:
+  #   <<: *service-base
+  #   command: python main.py api
+  #   ports:
+  #     - "8000:8000"
 
   schedule:
     <<: *service-base
+    environment:
+      - DATABASE_HOST=host.docker.internal
+      - PYTHONUNBUFFERED=1
+      - RUN_MIGRATIONS=true
     command: python main.py schedule
 
   assistant:
     <<: *service-base
+    environment:
+      - DATABASE_HOST=host.docker.internal
+      - PYTHONUNBUFFERED=1
+      - RUN_MIGRATIONS=false
     command: python main.py assistant
 
-  qdrant:
-    image: qdrant/qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    environment:
-      - QDRANT__SERVICE__API_KEY=4bffae8b6b80f51ed9ac9027f0a911dcc60be476fc62c214cf895ce87ca1d8a0
-    volumes:
-      - qdrant_data:/qdrant/storage
+  # qdrant:
+  #   image: qdrant/qdrant
+  #   ports:
+  #     - "6333:6333"
+  #     - "6334:6334"
+  #   environment:
+  #     - QDRANT__SERVICE__API_KEY=4bffae8b6b80f51ed9ac9027f0a911dcc60be476fc62c214cf895ce87ca1d8a0
+  #   volumes:
+  #     - qdrant_data:/qdrant/storage
 
   # # Serviço Next.js
   # frontend:

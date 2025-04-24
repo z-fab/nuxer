@@ -17,14 +17,7 @@ def configure_jobs():
     )
 
     # Job para sortear os animais
-    scheduler.add_job(
-        job.job_lottery_animals,
-        args=[],
-        id="lottery_animals",
-        trigger="interval",
-        seconds=5,
-        # job.job_lottery_animals, args=[], id="lottery_animals", trigger="cron", hour=11, minute=0
-    )
+    scheduler.add_job(job.job_lottery_animals, args=[], id="lottery_animals", trigger="cron", hour=10, minute=0)
 
     # # Job para achar moedas
     # scheduler.add_job(

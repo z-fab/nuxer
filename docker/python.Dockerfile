@@ -21,7 +21,7 @@ RUN uv pip install --system .
 
 # Imagem final
 FROM python:3.12-alpine
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata py3-pillow
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -41,11 +41,18 @@ WORKDIR /app
 COPY _back/src/ /app/
 COPY _back/.env /app/.env
 
+COPY _back/alembic.ini /app/alembic.ini
+COPY _back/migrations /app/migrations
+
+COPY docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Configurar permissões
 RUN chown -R appuser:appgroup /app
 
 # Mudar para o usuário não-root
 USER appuser
 
-# O comando será substituído no docker-compose
+
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["python", "main.py"]

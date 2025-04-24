@@ -32,6 +32,7 @@ class UserAnimalORM(Base):
 def setup_relationships():
     from domains.fabzenda.orm.animal_modifier import AnimalModifierORM
     from domains.fabzenda.orm.animal_type import AnimalTypeORM
+    from domains.fabzenda.orm.inventory_items import InventoryItemORM
     from domains.user.orm.user import UserORM
 
     UserAnimalORM.user = relationship(UserORM, foreign_keys=[UserAnimalORM.user_id], back_populates="animals")
@@ -41,6 +42,7 @@ def setup_relationships():
     UserAnimalORM.modifier = relationship(
         AnimalModifierORM, foreign_keys=[UserAnimalORM.modifier_id], back_populates="animals"
     )
+    UserAnimalORM.inventory_items = relationship(InventoryItemORM, back_populates="user_animal", uselist=False)
 
 
 setup_relationships()

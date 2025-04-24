@@ -59,12 +59,10 @@ class FabzendaSlackPresenter:
         reward = info_winners["total_reward"]
         apelido = info_winners["animals"][0].user.apelido
 
-        if info_winners["n_distinct_animals"] == 3:
-            bonus = "Sorte está do seu lado! Você conquistou um bônus de 15% por reunir 3 fabichinhos diferentes no sorteio!"
-        elif info_winners["n_distinct_animals"] == 4:
-            bonus = "Que sorte absurda! Você garantiu um bônus de 30% por ter conseguido 4 fabichinhos diferentes no sorteio!"
-        elif info_winners["n_distinct_animals"] == 5:
-            bonus = "Bônus épico! Você recebeu 2x o prêmio por ter conseguido 5 fabichinhos únicos no sorteio!"
+        if info_winners["n_distinct_animals"] == 2:
+            bonus = "Sorte está do seu lado! Você conquistou um bônus de 25% por reunir 2 fabichinhos diferentes no sorteio!"
+        elif info_winners["n_distinct_animals"] == 3:
+            bonus = "Bônus épico! Você recebeu 2x o prêmio por ter conseguido 3 fabichinhos únicos no sorteio!"
         else:
             bonus = ""
 

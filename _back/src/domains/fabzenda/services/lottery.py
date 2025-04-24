@@ -53,11 +53,9 @@ class LotteryService:
             distinct_animals = set(distinct_animals)
 
             total_reward = sum([animal.reward for animal in user_animals])
-            if len(distinct_animals) == 3:
-                total_reward = int(total_reward * 1.15)
-            elif len(distinct_animals) == 4:
-                total_reward = int(total_reward * 1.30)
-            elif len(distinct_animals) == 5:
+            if len(distinct_animals) == 2:
+                total_reward = int(total_reward * 1.25)
+            elif len(distinct_animals) == 3:
                 total_reward = int(total_reward * 2)
 
             dict_winners[user_id] = {

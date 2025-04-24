@@ -26,12 +26,14 @@ class UserORM(Base):
 
 def setup_relationships():
     from domains.fabbank.orm.wallet import WalletORM
+    from domains.fabzenda.orm.inventory_items import InventoryItemORM
     from domains.fabzenda.orm.user_animal import UserAnimalORM
     from domains.fabzenda.orm.user_farm import UserFarmORM
 
     UserORM.wallet = relationship(WalletORM, back_populates="user", uselist=False)
     UserORM.animals = relationship(UserAnimalORM, back_populates="user", uselist=False)
     UserORM.farm = relationship(UserFarmORM, back_populates="user", uselist=False)
+    UserORM.inventory_items = relationship(InventoryItemORM, back_populates="user", uselist=False)
 
 
 setup_relationships()

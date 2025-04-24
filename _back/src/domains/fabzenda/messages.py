@@ -2,7 +2,9 @@ FABZENDA_OPTIONS = """
 # Menu da Fabzendinha 🌱
 : Selecione uma das opções abaixo
 .
- <🏕️ Minha Fabzenda(fabzenda)[opt=ver]P> <🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro,page=1]> <🏪 Oinc Store(fabzenda)[opt=store]>
+ <🏕️ Minha Fabzenda(fabzenda)[opt=ver]P>
+ <🌾 Celeiro Canto Bão(fabzenda)[opt=celeiro,page=1]>
+ <🏪 Oinc Store(fabzenda)[opt=store]>
 .
 """
 
@@ -44,7 +46,6 @@ FAZENDA_OVERVIEW_ANIMALS = """
 .
 """
 
-###
 FAZENDA_OVERVIEW_ANIMALS_DETAIL = """
 
 {emoji} {type} *{name}* `🎰 F₵ {reward}` `🛸 F₵ {expire_value}`
@@ -170,6 +171,64 @@ CELEIRO_ANIMAL_DETAIL_BUY_SUCCESS = """
 .
 {modifier}
 """
+###
+
+STORE_OVERVIEW = """
+A melhor, maior e único lugar que você pode comprar itens para sua Fabzenda e Fabichinhos!
+> Seu saldo: `F₵ {balance}`
+{items}
+.
+{paginador}
+"""
+
+STORE_OVERVIEW_ITEM = """
+.
+--
+.
+{emoji} *{name}* `F₵ {price}` || <👀 Detalhes(fabzenda)[opt=detalhe_item_store,id={id}]>
+: {description}
+"""
+
+STORE_WALLET_NOT_FOUND = """
+Não consegui encontrar sua Wallet. Você precisa ter uma Wallet no FabBank para usar a Fabzenda.
+: Para criar uma Wallet, fale com o Fabs.
+"""
+
+STORE_ITEM_DETAIL = """
+{emoji} *{name}* `F₵ {price}`
+: {description}
+
+> O que esse item faz?
+{effect_str}
+.
+<💳 Comprar(fabzenda)[opt=comprar_item,id={id}]P> <🏪 Voltar para Store(fabzenda)[opt=store]>
+"""
+
+STORE_BUY_SUCCESS = """
+{apelido}, você comprou um item para sua Fabzenda!
+`{emoji} {nome}` foi adicionado ao seu inventário e já está surtindo efeito.
+"""
+
+STORE_INSUFFICIENT_BALANCE = """
+{apelido}, não foi possível comprar o Item. Parece que você não tem saldo suficiente.
+: Para verificar seu saldo, utilize o comando `!fb` `saldo`
+"""
+
+STORE_ITEM_NOT_AVAILABLE = """
+{apelido}, não foi possível comprar o Item. Ele não está mais disponível para compra.
+: Para verificar os itens disponíveis, visite a Oinc Store
+"""
+
+STORE_TRANSACTION_ERROR = """
+{apelido}, não foi possível comprar o item. Algo deu errado na hora do pagamento.
+: Para verificar seu saldo, utilize o comando `!fb` `saldo`
+"""
+
+STORE_BUY_ERROR = """
+{apelido}, não foi possível comprar o Item. Algo deu errado.
+: Tente novamente e, caso não funcione, entre em contato com o Fabs
+"""
+
 
 ###
 FEED_INSUFFICIENT_BALANCE = """

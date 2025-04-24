@@ -3,9 +3,10 @@ from datetime import datetime
 from domains.fabbank.services.wallet import WalletService
 from domains.fabzenda.entities.user_animal import UserAnimalEntity
 from domains.fabzenda.repositories.animal_type import AnimalTypeRepository
+from domains.fabzenda.repositories.inventory_item import InventoryItemRepository
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.animal_modifier import AnimalModifierService
-from domains.fabzenda.services.user_farm import UserFarmService
+from domains.fabzenda.services.item import ItemService
 from domains.user.repositories.user import UserRepository
 from interfaces.presenters.hints import FabzendaHints
 from shared.dto.service_response import ServiceResponse
@@ -18,10 +19,11 @@ class UserAnimalService:
         self.user_repository = UserRepository(db_context)
         self.user_animal_repository = UserAnimalRepository(db_context)
         self.animal_type_repository = AnimalTypeRepository(db_context)
+        self.inventory_item_repository = InventoryItemRepository(db_context)
 
         self.wallet_service = WalletService(db_context)
         self.animal_modifier_service = AnimalModifierService(db_context)
-        self.user_farm_service = UserFarmService(db_context)
+        self.item_service = ItemService(db_context)
 
     def get_user_animals(self, user_id: int) -> ServiceResponse:
         user = self.user_repository.get_user_by_id(user_id)
@@ -84,8 +86,10 @@ class UserAnimalService:
     def _can_buy_animal_entity(self, user_id: int, animal_type: UserAnimalEntity) -> ServiceResponse:
         user_animals = self.user_animal_repository.get_user_animals_alive_by_user_id(user_id)
         wallet = self.wallet_service.get_balance_info(user_id).data["user_wallet"]
-        user_farm = self.user_farm_service.get_user_farm(user_id).data["user_farm"]
-        max_animals = user_farm.max_animals
+
+        # Verificando se o usuário tem itens que aumentam o número de slots de animais
+        qtd_aditional_animals = self.item_service.get_additional_animals_slot_by_user(user_id=user_id)
+        max_animals = 3 + qtd_aditional_animals.data["n_animals"]
 
         if len(user_animals) >= max_animals:
             return ServiceResponse(

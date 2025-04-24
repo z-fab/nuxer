@@ -25,6 +25,15 @@ class ViewPresenter:
             FabzendaHints.FAZENDA_OVERVIEW_VAZIA: self.fabzenda.fazenda_overview_vazia,
             FabzendaHints.FAZENDA_OVERVIEW_DETALHE_ANIMAL: self.fabzenda.fazenda_overview_detalhe_animal,
             ##
+            FabzendaHints.STORE_OVERVIEW: self.fabzenda.store_overview,
+            FabzendaHints.STORE_WALLET_NOT_FOUND: self.fabzenda.store_wallet_not_found,
+            FabzendaHints.STORE_DETALHE_ITEM: self.fabzenda.store_detalhe_item,
+            FabzendaHints.STORE_BUY_SUCCESS: self.fabzenda.store_buy_success,
+            FabzendaHints.STORE_TRANSACTION_ERROR: self.fabzenda.store_transaction_error,
+            FabzendaHints.STORE_ITEM_UNAVAILABLE: self.fabzenda.store_item_not_available,
+            FabzendaHints.STORE_INSUFFICIENT_BALANCE: self.fabzenda.store_insufficient_balance,
+            FabzendaHints.STORE_BUY_ERROR: self.fabzenda.store_buy_error,
+            ##
             FabzendaHints.CELEIRO_OVERVIEW: self.fabzenda.celeiro_overview,
             FabzendaHints.CELEIRO_DETALHE_ANIMAL: self.fabzenda.celeiro_detalhe_animal,
             FabzendaHints.CELEIRO_MAX_ANIMALS_REACHED: self.fabzenda.celeiro_max_animals_reached,

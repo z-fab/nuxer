@@ -42,6 +42,7 @@ import domains.fabzenda.orm.animal_modifier  # type: ignore  # noqa: E402, F401,
 import domains.fabzenda.orm.animal_type  # type: ignore  # noqa: E402, F401, F811, I001
 import domains.fabzenda.orm.user_animal  # type: ignore  # noqa: E402, F401, F811, I001
 import domains.fabzenda.orm.user_farm  # type: ignore  # noqa: E402, F401, F811, I001
+import domains.fabzenda.orm.item_definition  # type: ignore  # noqa: E402, F401, F811, I001
 
 
 def run_migrations_offline() -> None:

@@ -3,8 +3,9 @@ from datetime import datetime
 from domains.fabzenda import messages as MSG
 from domains.fabzenda.entities.animal_modifier import AnimalModifierEntity
 from domains.fabzenda.entities.animal_type import AnimalTypeEntity
+from domains.fabzenda.entities.inventory_item import InventoryItemEntity
+from domains.fabzenda.entities.item_definition import ItemDefinitionEntity
 from domains.fabzenda.entities.user_animal import UserAnimalEntity
-from domains.fabzenda.entities.user_farm import UserFarmEntity
 from domains.user.entities.user import UserEntity
 
 
@@ -16,11 +17,11 @@ class FabzendaSlackPresenter:
         return "Minha Fabzenda", MSG.FAZENDA_OVERVIEW_VAZIA.format(apelido=apelido)
 
     def fazenda_overview(
-        self, user_animals: list[UserAnimalEntity], user: UserEntity, user_farm: UserFarmEntity, **kwargs
+        self, user_animals: list[UserAnimalEntity], user: UserEntity, qtd_additional: int, **kwargs
     ) -> str:
         slots_fabzenda = [f"{animal.animal_type.emoji}" for animal in user_animals]
 
-        while len(slots_fabzenda) < user_farm.max_animals:
+        while len(slots_fabzenda) < (3 + qtd_additional):
             slots_fabzenda.append("[⊹]")
 
         animals_text = ""
@@ -74,7 +75,7 @@ class FabzendaSlackPresenter:
             slots=" ‧ ".join(slots_fabzenda),
             animals=animals_text,
             num_animals=len(user_animals),
-            total_animals=user_farm.max_animals,
+            total_animals=(3 + qtd_additional),
         )
 
     def fazenda_overview_detalhe_animal(self, user_animal: UserAnimalEntity, **kwargs) -> str:
@@ -141,6 +142,7 @@ class FabzendaSlackPresenter:
         return "Fabzenda 🏕️", animals_text
 
     def celeiro_overview(self, animal_types: list[UserAnimalEntity], balance: int, atual_page: int, **kwargs) -> str:
+        # Paginação
         per_page = 10
         total_pages = len(animal_types) // per_page + (1 if len(animal_types) % per_page > 0 else 0)
         animal_types_page = animal_types[per_page * (atual_page - 1) : per_page * atual_page]
@@ -235,6 +237,75 @@ class FabzendaSlackPresenter:
         )
 
         return "Parabéns 🎉", message
+
+    #####
+
+    def store_overview(self, items: list[ItemDefinitionEntity], balance: int, atual_page: int, **kwargs) -> str:
+        # Paginação
+        per_page = 10
+        total_pages = len(items) // per_page + (1 if len(items) % per_page > 0 else 0)
+        items_page = items[per_page * (atual_page - 1) : per_page * atual_page]
+
+        items_text = ""
+        for item in items_page:
+            items_text += MSG.STORE_OVERVIEW_ITEM.format(
+                id=item.item_id,
+                name=item.name,
+                emoji=item.emoji,
+                price=item.price,
+                description=item.description,
+            )
+
+        paginador = ""
+        if atual_page > 1:
+            paginador += MSG.FABZENDA_PAGINADOR_ANTERIOR.format(
+                command="celeiro",
+                page=atual_page - 1,
+            )
+
+        if atual_page < total_pages:
+            paginador += MSG.FABZENDA_PAGINADOR_PROXIMO.format(
+                command="celeiro",
+                page=atual_page + 1,
+            )
+
+        return "Oinc Store 🏪", MSG.STORE_OVERVIEW.format(
+            balance=balance,
+            items=items_text,
+            paginador=paginador.replace("\n", ""),
+        )
+
+    def store_wallet_not_found(self, **kwargs) -> str:
+        return "Oinc Store 🏪", MSG.STORE_WALLET_NOT_FOUND
+
+    def store_detalhe_item(self, item: ItemDefinitionEntity, **kwargs) -> str:
+        return "Detalhe Item 🏪", MSG.STORE_ITEM_DETAIL.format(
+            id=item.item_id,
+            name=item.name,
+            emoji=item.emoji,
+            price=item.price,
+            description=item.description,
+            effect_str=item.effect_str,
+        )
+
+    def store_buy_success(
+        self, apelido: str, item_definition: ItemDefinitionEntity, inventory_item: InventoryItemEntity, **kwargs
+    ) -> str:
+        return "Oinc Store 🏪", MSG.STORE_BUY_SUCCESS.format(
+            apelido=apelido, emoji=item_definition.emoji, nome=item_definition.name
+        )
+
+    def store_transaction_error(self, apelido: str, **kwargs) -> str:
+        return "Oinc Store 🏪", MSG.STORE_TRANSACTION_ERROR.format(apelido=apelido)
+
+    def store_item_not_available(self, apelido: str, **kwargs) -> str:
+        return "Oinc Store 🏪", MSG.STORE_ITEM_NOT_AVAILABLE.format(apelido=apelido)
+
+    def store_insufficient_balance(self, apelido: str, **kwargs) -> str:
+        return "Oinc Store 🏪", MSG.STORE_INSUFFICIENT_BALANCE.format(apelido=apelido)
+
+    def store_buy_error(self, apelido: str, **kwargs) -> str:
+        return "Oinc Store 🏪", MSG.STORE_BUY_ERROR.format(apelido=apelido)
 
     #####
 

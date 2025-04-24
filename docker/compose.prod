@@ -1,6 +1,6 @@
 x-service-base: &service-base
   build:
-    context: ..  # Contexto é a pasta pai (raiz do projeto)
+    context: .. # Contexto é a pasta pai (raiz do projeto)
     dockerfile: docker/python.Dockerfile
   restart: unless-stopped
   networks:
@@ -13,9 +13,9 @@ x-service-base: &service-base
 name: nuxer
 
 services:
-  api:
-    <<: *service-base
-    command: python main.py api
+  # api:
+  #   <<: *service-base
+  #   command: python main.py api
 
   schedule:
     <<: *service-base
