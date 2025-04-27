@@ -1,6 +1,6 @@
 x-service-base: &service-base
   build:
-    context: .. # Contexto é a pasta pai (raiz do projeto)
+    context: .. 
     dockerfile: docker/python.Dockerfile
   restart: unless-stopped
   networks:
@@ -26,7 +26,7 @@ services:
     <<: *service-base
     environment:
       - PYTHONUNBUFFERED=1
-      - RUN_MIGRATIONS=true
+      - RUN_MIGRATIONS=false
     command: python main.py assistant
 
   # # Serviço Next.js

@@ -36,6 +36,7 @@ def job_lottery_animals():
     rendered_message = presenter.render(response.data, FabzendaHints.NOTIFICATE_CHANNEL_LOTTERY)
     slack.send_message(channel="ux_team", text=rendered_message)
 
-    for user_id, info_winners in response.data["winners"].items():
+    for _, info_winners in response.data["winners"].items():
         rendered_message = presenter.render({"info_winners": info_winners}, FabzendaHints.NOTIFICATE_LOTTERY)
-        slack.send_dm(user=user_id, text=rendered_message)
+        user_slack = info_winners["animals"][0].user.slack_id
+        slack.send_dm(user=user_slack, text=rendered_message)
