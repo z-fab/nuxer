@@ -1,5 +1,6 @@
 from loguru import logger
 
+from domains.debriefing.command_router import handle_debriefing
 from domains.fabbank.command_router import handle_fabbank
 from domains.fabzenda.command_router import handle_fabzenda
 from shared.dto.slack_command_input import SlackCommandInput
@@ -13,6 +14,8 @@ def handle_command(input_data: SlackCommandInput, set_status: callable) -> UseCa
             return handle_fabbank(input_data, set_status)
         case "fabzenda" | "fz":
             return handle_fabzenda(input_data, set_status)
+        case "debriefing" | "db":
+            return handle_debriefing(input_data, set_status)
         case _:
             logger.debug(f"Comando não reconhecido: {input_data.command}")
             return UseCaseResponse(

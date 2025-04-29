@@ -1,32 +1,36 @@
 # auth_routes.py
 from datetime import timedelta
 
-from _back.src.shared.config.settings import SETTINGS as S
 from fastapi import APIRouter, Depends, HTTPException
-from services.auth_service import create_access_token, create_magic_link, current_user, verify_magic_link
 
-from models.entities.token_entity import MagicLinkRequest
-from models.entities.user_entity import UserEntity
+from domains.auth.entities.magic_link import MagicLinkRequestEntity
+from domains.auth.services.auth import AuthService
+from domains.user.entities.user import UserEntity
+from interfaces.routes.auth.dependencies import current_user
+from shared.config.settings import SETTINGS as S
+from shared.infrastructure.db_context import db
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
+auth_service = AuthService(db)
+
 
 @router.post("/request-magic-link")
-async def request_login(request: MagicLinkRequest):
-    create_magic_link(request.email)
+async def request_login(request: MagicLinkRequestEntity):
+    auth_service.create_magic_link(request.email)
 
     return {"message": "Link enviado"}
 
 
 @router.get("/verify-magic-link")
 async def verify_login(token: str):
-    email = verify_magic_link(token)
+    email = auth_service.verify_magic_link(token)
     if not email:
         raise HTTPException(status_code=400, detail="Link inválido ou expirado")
 
     # Criar o token JWT para o usuário
     access_token_expires = timedelta(minutes=S.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": email}, expires_delta=access_token_expires)
+    access_token = auth_service.create_access_token(data={"sub": email}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
 

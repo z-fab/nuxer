@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from interfaces.routes import fabzenda
+from interfaces.routes.auth import auth
+from interfaces.routes.webhook import debriefing
 
 app = FastAPI(
     title="Nuxer API",
@@ -20,8 +22,8 @@ app.add_middleware(
 
 # app.include_router(root.router)
 # app.include_router(fabbank.router)
-# app.include_router(auth.router)
-# app.include_router(webhooks.router)
+app.include_router(debriefing.router)
+app.include_router(auth.router)
 app.include_router(fabzenda.router)
 
 

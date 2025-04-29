@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Backend Uxer")
     parser.add_argument(
         "runner",
-        choices=["schedule", "assistant", "api"],
+        choices=["schedule", "assistant", "api", "deb"],
         help="Runner a ser executado",
     )
 
@@ -24,3 +24,6 @@ if __name__ == "__main__":
 
     elif args.runner == "schedule":
         init_schedule()
+
+    elif args.runner == "deb":
+        print("Debriefing runner not implemented yet.")

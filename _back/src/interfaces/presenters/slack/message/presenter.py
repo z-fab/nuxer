@@ -2,7 +2,8 @@ from enum import Enum
 
 from loguru import logger
 
-from interfaces.presenters.hints import FabbankHints, FabzendaHints
+from interfaces.presenters.hints import DebriefingHints, FabbankHints, FabzendaHints
+from interfaces.presenters.slack.message.debriefing import DebriefingSlackPresenter
 from interfaces.presenters.slack.message.fabbank import FabbankSlackPresenter
 from interfaces.presenters.slack.message.fabzenda import FabzendaSlackPresenter
 
@@ -11,6 +12,7 @@ class MessagePresenter:
     def __init__(self):
         self.fabbank = FabbankSlackPresenter()
         self.fabzenda = FabzendaSlackPresenter()
+        self.debriefing = DebriefingSlackPresenter()
         self._registry = {
             FabbankHints.BALANCE: self.fabbank.balance,
             FabbankHints.BALANCE_ADMIN: self.fabbank.balance_admin,
@@ -26,7 +28,7 @@ class MessagePresenter:
             ##
             FabbankHints.LOJA_OPTIONS: self.fabbank.loja_options,
             FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
-            ##
+            ##########
             FabzendaHints.FAZENDA_OPTIONS: self.fabzenda.fabzenda_option,
             ##
             FabzendaHints.NOTIFICATE_ANIMAL_DEAD: self.fabzenda.notificate_animal_dead,
@@ -34,6 +36,8 @@ class MessagePresenter:
             FabzendaHints.NOTIFICATE_ANIMAL_SICK: self.fabzenda.notificate_animal_sick,
             FabzendaHints.NOTIFICATE_CHANNEL_LOTTERY: self.fabzenda.notificate_channel_lottery,
             FabzendaHints.NOTIFICATE_LOTTERY: self.fabzenda.notificate_lottery,
+            ##########
+            DebriefingHints.DEBRIEFING_NOTIFICATE_SOLICITANTE: self.debriefing.debriefing_notificate_solicitante,
         }
 
     def render(self, data: dict, presenter_hint: Enum) -> str:

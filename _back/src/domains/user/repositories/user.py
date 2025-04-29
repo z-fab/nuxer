@@ -22,3 +22,32 @@ class UserRepository:
                 return None
 
             return UserEntity.model_validate(orm)
+
+    def get_user_by_email(self, email: str) -> UserEntity | None:
+        with self._db_session() as session:
+            orm = session.query(UserORM).filter(UserORM.email == email).order_by(UserORM.id.desc()).first()
+            if not orm:
+                return None
+
+            return UserEntity.model_validate(orm)
+
+    def get_user_by_notion_user_id(self, notion_user_id: str) -> UserEntity | None:
+        with self._db_session() as session:
+            orm = (
+                session.query(UserORM)
+                .filter(UserORM.notion_user_id == notion_user_id)
+                .order_by(UserORM.id.desc())
+                .first()
+            )
+            if not orm:
+                return None
+
+            return UserEntity.model_validate(orm)
+
+    def get_user_by_notion_id(self, notion_id: str) -> UserEntity | None:
+        with self._db_session() as session:
+            orm = session.query(UserORM).filter(UserORM.notion_id == notion_id).order_by(UserORM.id.desc()).first()
+            if not orm:
+                return None
+
+            return UserEntity.model_validate(orm)

@@ -1,7 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from routes import auth, fabbank, root, webhooks
 
 app = FastAPI(
