@@ -38,6 +38,7 @@ class MessagePresenter:
             FabzendaHints.NOTIFICATE_LOTTERY: self.fabzenda.notificate_lottery,
             ##########
             DebriefingHints.DEBRIEFING_NOTIFICATE_SOLICITANTE: self.debriefing.debriefing_notificate_solicitante,
+            DebriefingHints.DEBRIEFING_NOT_COMPLETED: self.debriefing.debriefing_not_completed,
         }
 
     def render(self, data: dict, presenter_hint: Enum) -> str:

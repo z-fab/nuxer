@@ -17,3 +17,6 @@ class DebriefingSlackPresenter:
         return MSG.DEBRIEFING_NOTIFICATE_SOLICITANTE.format(
             solicitante=solicitante.apelido, criado_por=criado_por.nome, titulo=titulo, id=id
         )
+
+    def debriefing_not_completed(self, **kwarg) -> str:
+        return MSG.DEBRIEFING_NOT_COMPLETED

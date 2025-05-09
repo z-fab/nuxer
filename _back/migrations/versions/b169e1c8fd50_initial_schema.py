@@ -229,29 +229,29 @@ def upgrade() -> None:
     seed_animal_types = sa.text("""
         INSERT INTO fabzenda.animal_types (type_id,"name",emoji,base_price,base_reward,hunger_rate,lifespan,available,description) VALUES
         /* ——— Comuns ——— */
-        (1 ,'Rato'     ,'🐁',  5, 2 ,12 ,10 ,true , 'Miúdo, se infiltra em qualquer bolso em busca de trocados.'),
-        (2 ,'Galinha'  ,'🐓',  8, 3 ,12 ,12 ,true , 'Ciscando sonhos no terreiro, canta moedas ao amanhecer.'),
-        (3 ,'Abelha'   ,'🐝', 10, 4 , 8 , 7 ,true , 'Zum‑zum frenético que transforma pólen em tinlints de ouro.'),
-        (4 ,'Coelho'   ,'🐇', 12, 4 ,10 ,11 ,true , 'Salta de ideia em ideia, multiplicando centavos em segredo.'),
-        (5 ,'Pato'     ,'🦆', 12, 4 ,14 ,12 ,true , 'Nada sossegado; cada “quack” ecoa como pingos na latinha.'),
+        (1 ,'Rato'     ,'🐁',  5, 3 ,12 ,10 ,true , 'Miúdo, se infiltra em qualquer bolso em busca de trocados.'),
+        (2 ,'Galinha'  ,'🐓',  8, 4 ,12 ,12 ,true , 'Ciscando sonhos no terreiro, canta moedas ao amanhecer.'),
+        (3 ,'Abelha'   ,'🐝', 10, 9 , 8 , 7 ,true , 'Zum‑zum frenético que transforma pólen em tinlints de ouro.'),
+        (4 ,'Coelho'   ,'🐇', 12, 6 ,10 ,11 ,true , 'Salta de ideia em ideia, multiplicando centavos em segredo.'),
+        (5 ,'Pato'     ,'🦆', 12, 7 ,14 ,12 ,true , 'Nada sossegado; cada “quack” ecoa como pingos na latinha.'),
         /* ——— Intermediários ——— */
-        (6 ,'Porco'    ,'🐖', 18, 5 ,12 ,14 ,true , 'Fuça lama, acha pepitas – jamais subestime um focinho curioso.'),
-        (7 ,'Gato'     ,'🐈', 20, 6 ,15 ,14 ,true, 'Ronrona vibrações que atraem sorte enquanto finge desdém.'),
-        (8 ,'Castor'   ,'🦫', 22, 6 ,16 ,15 ,true , 'Engenheiro de represas que represam fortuna gota a gota.'),
-        (9 ,'Ovelha'   ,'🐑', 25, 7 ,16 ,15 ,true , 'Fia nuvens de lã e deixa macios rendimentos no tear da vida.'),
-        (10,'Lontra'   ,'🦦', 28, 7 ,14 ,13 ,true, 'Brinca com pedrinhas‑cofre e estoura gargalhadas em moedas.'),
+        (6 ,'Porco'    ,'🐖', 18, 8 ,12 ,14 ,true , 'Fuça lama, acha pepitas – jamais subestime um focinho curioso.'),
+        (7 ,'Gato'     ,'🐈', 20, 9 ,15 ,14 ,true, 'Ronrona vibrações que atraem sorte enquanto finge desdém.'),
+        (8 ,'Castor'   ,'🦫', 22, 10 ,16 ,15 ,true , 'Engenheiro de represas que represam fortuna gota a gota.'),
+        (9 ,'Ovelha'   ,'🐑', 25, 11 ,16 ,15 ,true , 'Fia nuvens de lã e deixa macios rendimentos no tear da vida.'),
+        (10,'Lontra'   ,'🦦', 28, 14 ,14 ,13 ,true, 'Brinca com pedrinhas‑cofre e estoura gargalhadas em moedas.'),
         /* ——— Raros ——— */
-        (11,'Cachorro' ,'🐕', 32, 8 ,15 ,16 ,true, 'Fareja oportunidades soterradas e abana o rabo para o lucro.'),
-        (12,'Raposa'   ,'🦊', 34, 8 ,12 ,13 ,true, 'Pisca um olho, some com o prejuízo – traz só proveito na boca.'),
-        (13,'Lhama'    ,'🦙', 36, 9 ,18 ,17 ,true, 'Cuspe certeiro em despesas, passo firme rumo a altitudes de ganho.'),
-        (14,'Vaca'     ,'🐄', 38, 9 ,18 ,18 ,true, 'Muge baixo, enche baldes e cofres com a mesma paciência.'),
-        (15,'Cabra'    ,'🐐', 40,10 ,16 ,17 ,true, 'Escala penhascos de mercado como se fossem colinas de alfafa.'),
+        (11,'Cachorro' ,'🐕', 32, 13 ,15 ,16 ,true, 'Fareja oportunidades soterradas e abana o rabo para o lucro.'),
+        (12,'Raposa'   ,'🦊', 34, 16 ,12 ,13 ,true, 'Pisca um olho, some com o prejuízo – traz só proveito na boca.'),
+        (13,'Lhama'    ,'🦙', 36, 14 ,18 ,17 ,true, 'Cuspe certeiro em despesas, passo firme rumo a altitudes de ganho.'),
+        (14,'Vaca'     ,'🐄', 38, 14 ,18 ,18 ,true, 'Muge baixo, enche baldes e cofres com a mesma paciência.'),
+        (15,'Cabra'    ,'🐐', 40, 15 ,16 ,17 ,true, 'Escala penhascos de mercado como se fossem colinas de alfafa.'),
         /* ——— Altos valores ——— */
-        (16,'Cavalo'   ,'🐴', 45,10 ,18 ,19 ,true, 'Galopa notícias frescas e aposta no vento a favor.'),
-        (17,'Coruja'   ,'🦉', 46,10 ,16 ,18 ,true, 'Vira a cabeça 270° para ver lucro que ninguém enxergou.'),
-        (18,'Pinguim'  ,'🐧', 47,11 ,16 ,19 ,true, 'Desliza em filas de gelo como quem saca notas na maquininha.'),
-        (19,'Macaco'   ,'🐒', 49,11 ,14 ,18 ,true, 'Pulando de galho em galho, nunca deixa passar um trocado.'),
-        (20,'Panda'    ,'🐼', 50,12 ,18 ,21 ,true, 'Mastiga bambu zen – e expira dividendos fofinhos.');
+        (16,'Cavalo'   ,'🐴', 45, 15 ,18 ,19 ,true, 'Galopa notícias frescas e aposta no vento a favor.'),
+        (17,'Coruja'   ,'🦉', 46, 16 ,16 ,18 ,true, 'Vira a cabeça 270° para ver lucro que ninguém enxergou.'),
+        (18,'Pinguim'  ,'🐧', 47, 17 ,16 ,19 ,true, 'Desliza em filas de gelo como quem saca notas na maquininha.'),
+        (19,'Macaco'   ,'🐒', 49, 19 ,14 ,18 ,true, 'Pulando de galho em galho, nunca deixa passar um trocado.'),
+        (20,'Panda'    ,'🐼', 50, 18 ,18 ,21 ,true, 'Mastiga bambu zen – e expira dividendos fofinhos.');
     """)
     op.execute(seed_animal_types)
 

@@ -6,6 +6,13 @@ A {criado_por} montou um debriefing para uma demanda que você solicitou.
 <🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P>
 """
 
+DEBRIEFING_NOT_COMPLETED = """
+Hey ⚠️,
+Parece que você não finalizou o debriefing e tentou notificar o solicitante. Só posso notificar o solicitante se o debriefing estiver preenchido.
+: Conclua o debriefing e tente novamente.
+.
+"""
+
 
 DEBRIEFING_DETALHE_DEBRIEFING = """
 # [DB-{id_debriefing}] Debriefing: {titulo}

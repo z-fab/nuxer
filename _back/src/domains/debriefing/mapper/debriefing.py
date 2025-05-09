@@ -6,14 +6,18 @@ from shared.utils.notion_utils import notion_rich_text_to_markdown, notion_time_
 
 
 def notion_to_entity(notion_response: dict) -> DebriefingEntity | None:
-    print(notion_response)
-
     if not notion_response.get("id"):
         return None
 
     user_repository = UserRepository(db)
 
     props = notion_response.get("properties", {})
+
+    status = props.get("Status", {}).get("formula", {}).get("string", "")
+    try:
+        status = DebriefingStatus(status)
+    except ValueError:
+        status = DebriefingStatus.NAO_CONCLUIDO
 
     criado_por = notion_response.get("created_by", {}).get("id", "")
     criado_por = user_repository.get_user_by_notion_user_id(criado_por.replace("-", ""))
@@ -68,7 +72,7 @@ def notion_to_entity(notion_response: dict) -> DebriefingEntity | None:
         id=notion_response.get("id", "").replace("-", ""),
         cod=cod,
         titulo=titulo,
-        status=DebriefingStatus.NAO_PREENCHIDO,
+        status=status,
         url=notion_response.get("url", None),
         criado_por=criado_por,
         editado_por=editado_por,
