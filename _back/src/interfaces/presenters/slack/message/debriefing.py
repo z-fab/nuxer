@@ -49,3 +49,6 @@ class DebriefingSlackPresenter:
 
     def debriefing_solicitante_not_found(self, **kwarg) -> str:
         return MSG.DEBRIEFING_SOLICITANTE_NOT_FOUND
+
+    def debriefing_options(self) -> str:
+        return MSG.DEBRIEFING_OPTIONS

@@ -37,6 +37,7 @@ class MessagePresenter:
             FabzendaHints.NOTIFICATE_CHANNEL_LOTTERY: self.fabzenda.notificate_channel_lottery,
             FabzendaHints.NOTIFICATE_LOTTERY: self.fabzenda.notificate_lottery,
             ##########
+            DebriefingHints.DEBRIEFING_OPTIONS: self.debriefing.debriefing_options,
             DebriefingHints.DEBRIEFING_NOTIFICATE_SOLICITANTE: self.debriefing.debriefing_notificate_solicitante,
             DebriefingHints.DEBRIEFING_NOTIFICATE_CHANNEL: self.debriefing.debriefing_notificate_channel,
             DebriefingHints.DEBRIEFING_NOT_COMPLETED: self.debriefing.debriefing_not_completed,

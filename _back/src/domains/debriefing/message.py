@@ -1,3 +1,14 @@
+DEBRIEFING_OPTIONS = """
+# 📑 Menu Debriefings
+: Selecione uma das opções abaixo
+.
+ < ☑️ Debriefings Validados(debriefing)[opt=ver_validados,page=1]>
+ < 👟 Debriefings Priorizados(debriefing)[opt=ver_priorizados,page=1]>
+ < 👀 Debriefings para Validar(debriefing)[opt=ver_para_validar,page=1]D>
+.
+"""
+
+
 DEBRIEFING_NOTIFICATE_SOLICITANTE = """
 Oi {solicitante}, <@{criado_por}> montou um debriefing para uma demanda que você solicitou e já está *pronto para ser validado*.
 .
