@@ -1,8 +1,18 @@
 DEBRIEFING_NOTIFICATE_SOLICITANTE = """
-Oi {solicitante}!,
-A {criado_por} montou um debriefing para uma demanda que você solicitou.
-> {titulo}
-: Clique no botão abaixo para visualizar o debriefing em detalhes.
+Oi {solicitante}, <@{criado_por}> montou um debriefing para uma demanda que você solicitou e já está *pronto para ser validado*.
+.
+📑 *[ {cod} ] {titulo}* 
+Você pode acessar pelo botão abaixo ou <{url}|clicando aqui>
+.
+<🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P> <[✔︎] Validar Debriefing(debriefing)[opt=validar_debriefing,id={id}]D>
+: ⚠️ Valide apenas após conferir todas as informações e se certificar que o mesmo está correto!
+
+"""
+
+DEBRIEFING_NOTIFICATE_CHANNEL = """
+Um debriefing foi criado por <@{criado_por}> e enviado para: {solicitantes}
+📑 *[ {cod} ] {titulo}* 
+: Você pode acessar pelo botão abaixo ou <{url}|clicando aqui>
 <🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P>
 """
 
@@ -13,6 +23,11 @@ Parece que você não finalizou o debriefing e tentou notificar o solicitante. S
 .
 """
 
+DEBRIEFING_SOLICITANTE_NOT_FOUND = """
+⚠️ Não consegui encontrar o solicitante do debriefing.
+Parece que você tentou notificar o solicitante, mas não consegui encontrar quem é.
+: Verifique se o solicitante está correto. Na dúvida avise o Fabs
+"""
 
 DEBRIEFING_DETALHE_DEBRIEFING = """
 # [DB-{id_debriefing}] Debriefing: {titulo}
@@ -35,11 +50,4 @@ DEBRIEFING_DETALHE_DEBRIEFING = """
 *Estimativa de UX*: {estimativa_ux}
 *Estimativa de Writing*: {estimativa_writing}
 --
-"""
-
-TEMPLATE_DEBRIEFING_NOTIFICAR_CHANNEL = """
-Um debriefing foi finalizado e validado por: {solicitantes}.
-📑 *[DB-{id_debriefing}] {titulo}*
-: {url}
-<🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P>
 """

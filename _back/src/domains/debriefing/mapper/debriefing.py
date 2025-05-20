@@ -43,9 +43,13 @@ def notion_to_entity(notion_response: dict) -> DebriefingEntity | None:
     validado_em = validado_em.get("start", None) if validado_em else None
     validado_em = notion_time_to_datetime(validado_em)
 
-    solicitante = props.get("Solicitante", {}).get("relation", [{}])
-    solicitante = solicitante[0].get("id", "") if len(solicitante) > 0 else ""
-    solicitante = user_repository.get_user_by_notion_id(solicitante.replace("-", ""))
+    solicitante_list = []
+    solicitantes = props.get("Solicitante", {}).get("relation", [{}])
+    for solicitante in solicitantes:
+        solicitante = solicitante.get("id", "")
+        solicitante = user_repository.get_user_by_notion_id(solicitante.replace("-", ""))
+        if solicitante:
+            solicitante_list.append(solicitante)
 
     descricao = props.get("Descrição e Objetivos", {}).get("rich_text", [{}])
     descricao = notion_rich_text_to_markdown(descricao)
@@ -82,7 +86,7 @@ def notion_to_entity(notion_response: dict) -> DebriefingEntity | None:
         validado_por=validado_por,
         validado_em=validado_em,
         produto=[""],
-        solicitante=solicitante,
+        solicitante=solicitante_list,
         projeto=[""],
         estimativa_bi=props.get("Estimativa BI", {}).get("number", 0),
         estimativa_ux=props.get("Estimativa UX", {}).get("number", 0),

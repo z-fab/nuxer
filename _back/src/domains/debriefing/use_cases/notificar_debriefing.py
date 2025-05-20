@@ -19,10 +19,19 @@ class NotificarDebriefing:
             if service_response.error == DebriefingHints.DEBRIEFING_NOT_COMPLETED:
                 return UseCaseResponse(
                     success=False,
-                    error=DebriefingHints.DEBRIEFING_NOT_COMPLETED,
                     notification=[
                         {
                             "presenter_hint": DebriefingHints.DEBRIEFING_NOT_COMPLETED,
+                            "user": service_response.data["criado_por"],
+                        }
+                    ],
+                )
+            if service_response.error == DebriefingHints.DEBRIEFING_SOLICITANTE_NOT_FOUND:
+                return UseCaseResponse(
+                    success=False,
+                    notification=[
+                        {
+                            "presenter_hint": DebriefingHints.DEBRIEFING_SOLICITANTE_NOT_FOUND,
                             "user": service_response.data["criado_por"],
                         }
                     ],
@@ -35,10 +44,17 @@ class NotificarDebriefing:
 
         notification = [
             {
-                "presenter_hint": DebriefingHints.DEBRIEFING_NOTIFICATE_SOLICITANTE,
-                "user": service_response.data["solicitante"],
+                "presenter_hint": DebriefingHints.DEBRIEFING_NOTIFICATE_CHANNEL,
+                "channel": "gazeta_uxer",
             }
         ]
+        for solicitante in service_response.data["solicitante"]:
+            notification.append(
+                {
+                    "presenter_hint": DebriefingHints.DEBRIEFING_NOTIFICATE_SOLICITANTE,
+                    "user": solicitante,
+                }
+            )
 
         if "wallet_to" in service_response.data:
             logger.info(

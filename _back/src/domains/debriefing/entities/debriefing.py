@@ -25,7 +25,7 @@ class DebriefingEntity(BaseModel):
     validado_em: datetime | None
 
     produto: list[str]
-    solicitante: UserEntity | None
+    solicitante: list[UserEntity] | list[None] | None
     projeto: list[str]
 
     estimativa_bi: int

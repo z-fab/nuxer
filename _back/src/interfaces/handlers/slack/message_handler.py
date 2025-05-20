@@ -69,15 +69,21 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
                     rendered_message = presenter.render(use_case_response.data, notification.get("presenter_hint"))
 
                     # Notifica o usuário
-                    if not notification.get("user"):
+                    if (not notification.get("user")) and (not notification.get("channel")):
                         say(say_fn, rendered_message, ts=ts)
-                    # Notifica o usuário específico
+
+                    # Notifica o usuário ou canal específico
                     else:
-                        user_to_notify = notification.get("user")
-                        logger.info(
-                            f"Notificando {user_to_notify.nome} ({user_to_notify.slack_id}) sobre: {rendered_message}"
-                        )
-                        slack.send_dm(user=notification.get("user").slack_id, text=rendered_message)
+                        if notification.get("user"):
+                            user_to_notify = notification.get("user")
+                            logger.info(
+                                f"Notificando {user_to_notify.nome} ({user_to_notify.slack_id}) sobre: {rendered_message}"
+                            )
+                            slack.send_dm(user=notification.get("user").slack_id, text=rendered_message)
+                        elif notification.get("channel"):
+                            channel_to_notify = notification.get("channel")
+                            logger.info(f"Notificando canal {channel_to_notify} sobre: {rendered_message}")
+                            slack.send_message(channel=channel_to_notify, text=rendered_message)
                 else:
                     # Se não houver presenter_hint, renderiza a mensagem padrão
                     message = (
