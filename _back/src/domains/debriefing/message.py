@@ -8,23 +8,33 @@ DEBRIEFING_OPTIONS = """
 .
 """
 
-
 DEBRIEFING_NOTIFICATE_SOLICITANTE = """
 Oi {solicitante}, <@{criado_por}> montou um debriefing para uma demanda que você solicitou e já está *pronto para ser validado*.
 .
 📑 *[ {cod} ] {titulo}* 
-Você pode acessar pelo botão abaixo ou <{url}|clicando aqui>
+Você pode acessar <{url}|clicando aqui>
 .
-<🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P> <[✔︎] Validar Debriefing(debriefing)[opt=validar_debriefing,id={id}]D>
+<[✔︎] Validar Debriefing(debriefing)[opt=validar_debriefing,id={id}]D>
 : ⚠️ Valide apenas após conferir todas as informações e se certificar que o mesmo está correto!
 
 """
+# <🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P>
 
 DEBRIEFING_NOTIFICATE_CHANNEL = """
 Um debriefing foi criado por <@{criado_por}> e enviado para: {solicitantes}
 📑 *[ {cod} ] {titulo}* 
-: Você pode acessar pelo botão abaixo ou <{url}|clicando aqui>
-<🔍 Ver Debriefing(debriefing)[opt=ver_debriefing,id={id}]P>
+: Você pode acessar <{url}|clicando aqui>
+"""
+
+DEBRIEFING_VALIDATION_SUCCESS = """
+Você validou o debriefing abaixo com sucesso!
+> 📑 *[ {cod} ] {titulo}*
+: Já notifiquei o time sobre a validação feita.
+"""
+
+DEBRIEFING_VALIDATION_SUCCESS_CHANNEL = """
+O debriefing abaixo foi validado por <@{validado_por}>
+> 📑 *[ {cod} ] {titulo}*
 """
 
 DEBRIEFING_NOT_COMPLETED = """
@@ -40,6 +50,7 @@ Parece que você tentou notificar o solicitante, mas não consegui encontrar que
 : Verifique se o solicitante está correto. Na dúvida avise o Fabs
 """
 
+####
 DEBRIEFING_DETALHE_DEBRIEFING = """
 # [DB-{id_debriefing}] Debriefing: {titulo}
 : {url}

@@ -3,8 +3,9 @@ from enum import Enum
 
 class DebriefingStatus(Enum):
     NAO_CONCLUIDO = "[ 📑 Não Concluído ]"
-    NOTIFICAR = "[ 📨 Notifique! ]"
     SEM_ESTIMATIVA = "[ ⏱️ Sem Estimativa ]"
+    NOTIFICAR = "[ 📨 Notifique! ]"
+    EM_VALIDACAO = "[ 👀 Em Validação ]"
     ATRELAR_PROJETO = "[ 📦 Priorizar ]"
     CONCLUIDO = "[ ✅ Concluído ]"
 

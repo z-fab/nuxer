@@ -12,7 +12,7 @@ def slack_notifier(use_case_response: UseCaseResponse):
             if notification.get("presenter_hint"):
                 presenter = MessagePresenter()
                 use_case_response.data["user"] = notification.get("user")
-                use_case_response.data["channel"] = notification.get("user")
+                use_case_response.data["channel"] = notification.get("channel")
                 rendered_message = presenter.render(use_case_response.data, notification.get("presenter_hint"))
             else:
                 rendered_message = (

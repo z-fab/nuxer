@@ -61,6 +61,7 @@ def handle_message_event(context: BoltContext, payload: dict) -> bool:
         use_case_response = handle_command(input_data, composed_set_status)
 
         # Verifica se há notificações definidas
+        # slack_notifier(use_case_response)
         if use_case_response.notification:
             # Para cada notificação, renderiza a mensagem
             for notification in use_case_response.notification:

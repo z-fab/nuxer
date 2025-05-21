@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 from loguru import logger
 
 from domains.debriefing.mapper.debriefing import notion_to_entity
+from domains.user.entities.user import UserEntity
 from shared.infrastructure.notion_context import notion
 
 
@@ -29,7 +30,34 @@ class DebriefingRepository:
                     "start": data.isoformat(),
                 },
             },
+            "Validado em": {
+                "date": None,
+            },
+            "Validado por": {
+                "relation": [],
+            },
         }
+        return self._update_debriefing(page_id, properties)
+
+    def update_validacao(self, page_id: str, validado_por: UserEntity, data: datetime | None = None) -> bool:
+        if data is None:
+            data = datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
+
+        properties = {
+            "Validado em": {
+                "date": {
+                    "start": data.isoformat(),
+                },
+            },
+            "Validado por": {
+                "relation": [
+                    {
+                        "id": validado_por.notion_id,
+                    },
+                ],
+            },
+        }
+
         return self._update_debriefing(page_id, properties)
 
     def _update_debriefing(self, page_id: str, properties: dict) -> bool:

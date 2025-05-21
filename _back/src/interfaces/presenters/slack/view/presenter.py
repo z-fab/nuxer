@@ -2,7 +2,8 @@ from enum import Enum
 
 from loguru import logger
 
-from interfaces.presenters.hints import FabbankHints, FabzendaHints
+from interfaces.presenters.hints import DebriefingHints, FabbankHints, FabzendaHints
+from interfaces.presenters.slack.view.debriefing import DebriefingSlackPresenter
 from interfaces.presenters.slack.view.fabbank import FabbankSlackPresenter
 from interfaces.presenters.slack.view.fabzenda import FabzendaSlackPresenter
 
@@ -11,6 +12,7 @@ class ViewPresenter:
     def __init__(self):
         self.fabzenda = FabzendaSlackPresenter()
         self.fabbank = FabbankSlackPresenter()
+        self.debriefing = DebriefingSlackPresenter()
         self._registry = {
             FabbankHints.LOJA_OVERVIEW: self.fabbank.loja_overview,
             FabbankHints.LOJA_BUY_SUCCESS: self.fabbank.loja_buy_success,
@@ -60,6 +62,8 @@ class ViewPresenter:
             FabzendaHints.ABDUCTION_TRANSACTION_ERROR: self.fabzenda.abduzir_transaction_error,
             FabzendaHints.ABDUCTION_ERROR: self.fabzenda.abduzir_error,
             FabzendaHints.ABDUCTION_SUCCESS: self.fabzenda.abduzir_animal,
+            ###########
+            DebriefingHints.DEBRIEFING_VALIDATION_SUCCESS: self.debriefing.debriefing_validation_success,
         }
 
     def render(self, data: dict, presenter_hint: Enum) -> str:

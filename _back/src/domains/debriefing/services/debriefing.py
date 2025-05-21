@@ -1,6 +1,7 @@
 from domains.debriefing.repositories.debriefing import DebriefingRepository
 from domains.debriefing.types.status import DebriefingStatus
 from domains.fabbank.services.transaction import TransactionService
+from domains.user.entities.user import UserEntity
 from interfaces.presenters.hints import DebriefingHints
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
@@ -10,6 +11,29 @@ class DebriefingService:
     def __init__(self, db_context: DatabaseExternal | None = None):
         self.debriefing_repository = DebriefingRepository()
         self.transaction_service = TransactionService(db_context)
+
+    def validar_debriefing(self, id_page: str, user: UserEntity) -> ServiceResponse:
+        debriefing_entity = self.debriefing_repository.get_debriefing_by_page_id(id_page.replace("-", ""))
+
+        # Verifica se o debriefing existe
+        if not debriefing_entity:
+            return ServiceResponse(success=False, error=DebriefingHints.DEBRIEFING_NOT_FOUND)
+
+        # Verifica se o debriefing pode ser validado
+        if (
+            debriefing_entity.status == DebriefingStatus.NAO_CONCLUIDO
+            or debriefing_entity.status == DebriefingStatus.SEM_ESTIMATIVA
+            or debriefing_entity.status == DebriefingStatus.NOTIFICAR
+        ):
+            return ServiceResponse(
+                success=False,
+                error=DebriefingHints.DEBRIEFING_CAN_NOT_VALIDATE,
+            )
+
+        if not self.debriefing_repository.update_validacao(page_id=debriefing_entity.id, validado_por=user):
+            return ServiceResponse(success=False, error=DebriefingHints.DEBRIEFING_VALIDATION_ERROR)
+
+        return ServiceResponse(success=True, data={"debriefing": debriefing_entity, "validado_por": user})
 
     def notificar_debriefing(self, id_page: str) -> ServiceResponse:
         debriefing_entity = self.debriefing_repository.get_debriefing_by_page_id(id_page.replace("-", ""))
