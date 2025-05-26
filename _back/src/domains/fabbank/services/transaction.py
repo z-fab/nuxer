@@ -1,7 +1,7 @@
 from domains.fabbank.entities.wallet import WalletEntity
 from domains.fabbank.repositories.transaction import TransactionRepository
 from domains.fabbank.repositories.wallet import WalletRepository
-from interfaces.presenters.hints import FabbankHints
+from shared.dto.error_code import FabbankError
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 
@@ -11,7 +11,7 @@ class TransactionService:
         self.transaction_repository = TransactionRepository(db_context)
         self.wallet_repository = WalletRepository(db_context)
 
-    # Método para transferir moedas entre wallets
+    # Métodos para transferir moedas entre wallets
     def transfer_coins(self, from_id: str, to_id: str, value: int, description: str) -> ServiceResponse:
         wallet_from = self.wallet_repository.get_wallet_by_user_id(from_id)
         wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
@@ -24,7 +24,7 @@ class TransactionService:
         # Executar a transferência
         result = self._execute_transfer(wallet_from, wallet_to, value, description)
         if not result:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_ERROR)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_GENERIC_ERROR)
 
         return ServiceResponse(
             success=True,
@@ -42,22 +42,22 @@ class TransactionService:
     ) -> ServiceResponse:
         # Validar as wallets
         if not wallet_from:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WALLET_NOT_FOUND)
+            return ServiceResponse(success=False, error=FabbankError.WALLET_NOT_FOUND)
 
         if not wallet_to:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WALLET_NOT_FOUND)
+            return ServiceResponse(success=False, error=FabbankError.WALLET_NOT_FOUND)
 
         # Validar o valor
         if value <= 0:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WRONG_PARAMS)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_WRONG_PARAMS)
 
         # Validar a descrição
         if not description:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WRONG_PARAMS)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_WRONG_PARAMS)
 
         # Validar o saldo
         if wallet_from.balance < value:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_INSUFFICIENT_BALANCE)
+            return ServiceResponse(success=False, error=FabbankError.INSUFFICIENT_BALANCE)
 
         return ServiceResponse(success=True)
 
@@ -80,7 +80,7 @@ class TransactionService:
         result = self.transaction_repository.create_transaction(wallet_from, wallet_to, value, description)
         return result
 
-    # Método para alterar o saldo de uma wallet
+    # Métodos para alterar o saldo de uma wallet
     def change_coins(self, to_id: str, value: int, description: str) -> ServiceResponse:
         # Obter a wallet
         wallet_to = self.wallet_repository.get_wallet_by_user_id(to_id)
@@ -93,7 +93,7 @@ class TransactionService:
         # Executar a mudança
         result = self._execute_change(wallet_from, wallet_to, value, description)
         if not result:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_ERROR)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_GENERIC_ERROR)
 
         return ServiceResponse(
             success=True,
@@ -111,24 +111,24 @@ class TransactionService:
     ) -> ServiceResponse:
         # Validando acesso
         if not wallet_from or wallet_from.user.role > 0:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_PERMISSION_DENIED)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_PERMISSION_DENIED)
 
         # Validar a wallet
         if not wallet_to:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WALLET_NOT_FOUND)
+            return ServiceResponse(success=False, error=FabbankError.WALLET_NOT_FOUND)
 
         # Validar se o valor é numérico
         if not isinstance(value, int):
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WRONG_PARAMS)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_WRONG_PARAMS)
 
         # Validar a descrição
         if not description:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WRONG_PARAMS)
+            return ServiceResponse(success=False, error=FabbankError.TRANSFER_WRONG_PARAMS)
 
         # Obter a wallet do sistema (ID 0)
         wallet_from = self.wallet_repository.get_wallet_by_user_id(0)
         if not wallet_from:
-            return ServiceResponse(success=False, error=FabbankHints.TRANSFER_WALLET_NOT_FOUND)
+            return ServiceResponse(success=False, error=FabbankError.WALLET_NOT_FOUND)
 
         return ServiceResponse(success=True)
 

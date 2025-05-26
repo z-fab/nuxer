@@ -2,7 +2,7 @@ from loguru import logger
 
 from domains.debriefing.services.debriefing import DebriefingService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.hints import DebriefingHints
+from interfaces.presenters.OLD.hints import DebriefingHints
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 

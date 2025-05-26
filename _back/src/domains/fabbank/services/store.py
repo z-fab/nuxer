@@ -5,7 +5,7 @@ from domains.fabbank.entities.item_loja import ItemLojaEntity
 from domains.fabbank.repositories.store import StoreRepository
 from domains.fabbank.repositories.transaction import TransactionRepository
 from domains.fabbank.repositories.wallet import WalletRepository
-from interfaces.presenters.hints import FabbankHints
+from shared.dto.error_code import FabbankError
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 
@@ -23,7 +23,7 @@ class StoreService:
         if not item_list:
             return ServiceResponse(
                 success=False,
-                error=FabbankHints.LOJA_NO_ITEMS,
+                error=FabbankError.LOJA_NO_ITEMS,
             )
 
         for item in item_list:
@@ -70,7 +70,7 @@ class StoreService:
         if not self.wallet_repository.remove_coins(wallet, item.valor):
             return ServiceResponse(
                 success=False,
-                error=FabbankHints.LOJA_BUY_ERROR,
+                error=FabbankError.LOJA_BUY_ERROR,
             )
 
         reserva_real = self.config_repository.get_config_by_name("RESERVA_REAL")
@@ -93,18 +93,21 @@ class StoreService:
 
         # Validate if the wallet exists
         if not wallet:
-            return ServiceResponse(success=False, error=FabbankHints.LOJA_WALLET_NOT_FOUND)
+            return ServiceResponse(
+                success=False,
+                error=FabbankError.WALLET_NOT_FOUND,
+            )
 
         # Validate if the item is available
         if not item or item.amount == 0 or not item.enable:
-            return ServiceResponse(success=False, error=FabbankHints.LOJA_ITEM_UNAVAILABLE)
+            return ServiceResponse(success=False, error=FabbankError.LOJA_ITEM_UNAVAILABLE)
 
         # Validate if the user has enough balance
         if wallet.balance < item.valor:
-            return ServiceResponse(success=False, error=FabbankHints.LOJA_INSUFFICIENT_BALANCE)
+            return ServiceResponse(success=False, error=FabbankError.INSUFFICIENT_BALANCE)
 
         if item.valor != price:
-            return ServiceResponse(success=False, error=FabbankHints.LOJA_ITEM_PRICE_CHANGED)
+            return ServiceResponse(success=False, error=FabbankError.LOJA_ITEM_PRICE_CHANGED)
 
         return ServiceResponse(success=True)
 

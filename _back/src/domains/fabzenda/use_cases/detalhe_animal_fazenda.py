@@ -1,7 +1,7 @@
 from loguru import logger
 
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
-from interfaces.presenters.hints import FabzendaHints
+from interfaces.presenters.OLD.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db

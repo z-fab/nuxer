@@ -9,7 +9,7 @@ from domains.fabzenda.use_cases.enterrar_animal import EnterrarAnimal
 from domains.fabzenda.use_cases.ver_celeiro import VerCeleiro
 from domains.fabzenda.use_cases.ver_fabzenda import VerFabzenda
 from domains.fabzenda.use_cases.ver_store import VerStore
-from interfaces.presenters.hints import FabzendaHints
+from interfaces.presenters.OLD.hints import FabzendaHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 

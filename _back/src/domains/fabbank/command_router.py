@@ -3,7 +3,7 @@ from domains.fabbank.use_cases.comprar_item import ComprarItem
 from domains.fabbank.use_cases.consultar_saldo import ConsultarSaldo
 from domains.fabbank.use_cases.transferir import Transferir
 from domains.fabbank.use_cases.ver_loja import VerLoja
-from interfaces.presenters.hints import FabbankHints
+from interfaces.presenters.OLD.hints import FabbankHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 

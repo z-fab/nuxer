@@ -8,7 +8,7 @@ from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.animal_modifier import AnimalModifierService
 from domains.fabzenda.services.item import ItemService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.hints import FabzendaHints
+from interfaces.presenters.OLD.hints import FabzendaHints
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 from shared.utils import fabzenda_utils

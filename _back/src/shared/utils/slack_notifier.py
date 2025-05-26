@@ -1,6 +1,6 @@
 from loguru import logger
 
-from interfaces.presenters.slack.message.presenter import MessagePresenter
+from interfaces.presenters.OLD.slack.message.presenter import MessagePresenter
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.slack_context import slack
 

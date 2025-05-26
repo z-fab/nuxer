@@ -1,5 +1,5 @@
 from domains.debriefing.use_cases.validar_debriefing import ValidarDebriefing
-from interfaces.presenters.hints import DebriefingHints
+from interfaces.presenters.OLD.hints import DebriefingHints
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 

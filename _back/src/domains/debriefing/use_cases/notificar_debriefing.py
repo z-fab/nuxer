@@ -1,7 +1,7 @@
 from loguru import logger
 
 from domains.debriefing.services.debriefing import DebriefingService
-from interfaces.presenters.hints import DebriefingHints, FabbankHints
+from interfaces.presenters.OLD.hints import DebriefingHints, FabbankHints
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
@@ -38,7 +38,7 @@ class NotificarDebriefing:
                 )
             return UseCaseResponse(
                 success=False,
-                error=service_response.error,
+                error_code=service_response.error,
                 notification=[],
             )
 

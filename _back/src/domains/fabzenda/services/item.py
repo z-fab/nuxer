@@ -5,7 +5,7 @@ from domains.fabzenda.repositories.item_definition import ItemDefinitionReposito
 from domains.fabzenda.services.animal_modifier import AnimalModifierService
 from domains.fabzenda.services.user_farm import UserFarmService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.hints import FabzendaHints
+from interfaces.presenters.OLD.hints import FabzendaHints
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 

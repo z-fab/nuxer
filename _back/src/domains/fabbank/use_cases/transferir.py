@@ -1,25 +1,34 @@
 from loguru import logger
 
-from domains.fabbank import messages as MSG
 from domains.fabbank.services.transaction import TransactionService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.hints import FabbankHints
-from shared.dto.slack_command_input import SlackCommandInput
+from shared.dto.error_code import FabbankError
+from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
 
 class Transferir:
-    def __init__(self, input_data: SlackCommandInput):
-        self.input = input_data
+    def __init__(self, ucr: UseCaseRequest):
+        self.user_id = ucr.payload.get("user_id", None)
+        self.args = ucr.payload.get("args", None)
+        self.code = ucr.code
 
     def __call__(self) -> UseCaseResponse:
-        parsed_args, args = self._parse_args()
-        if not parsed_args:
-            return UseCaseResponse(success=False, notification=[{"presenter_hint": FabbankHints.TRANSFER_WRONG_PARAMS}])
+        args = self._parse_args()
+        if len(args) <= 0:
+            return UseCaseResponse(
+                success=False,
+                code=self.code,
+                error_code=FabbankError.TRANSFER_WRONG_PARAMS,
+            )
+
+        if self.user_id is None:
+            logger.error("ID do usuário não fornecido na requisição.")
+            return UseCaseResponse(success=False, code=self.code, error_code=FabbankError.GENERIC_ERROR)
 
         user_repository = UserRepository(db)
-        user = user_repository.get_user_by_slack_id(self.input.user_id)
+        user = user_repository.get_user_by_slack_id(self.user_id)
         user_to = user_repository.get_user_by_slack_id(args["to_slack_id"])
 
         transaction_service = TransactionService(db)
@@ -33,10 +42,9 @@ class Transferir:
             logger.error(f"Erro ao validar a transferência: {validate_response.error}")
             return UseCaseResponse(
                 success=False,
+                code=self.code,
                 data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": validate_response.error},
-                ],
+                error_code=validate_response.error,
             )
 
         # Executar a transferência
@@ -44,54 +52,45 @@ class Transferir:
 
         if response.success:
             logger.info(
-                f"Transferência realizada de {self.input.user_id} para {args['to_slack_id']}: {args['value']} F₵ - {args['description']}"
+                f"Transferência realizada de {self.user_id} para {args['to_slack_id']}: {args['value']} F₵ - {args['description']}"
             )
-            return UseCaseResponse(
-                success=True,
-                data=response.data,
-                notification=[
-                    {"presenter_hint": FabbankHints.TRANSFER_SUCCESS},
-                    {
-                        "presenter_hint": FabbankHints.TRANSFER_SUCCESS_NOTIFICATION,
-                        "user": response.data["wallet_to"].user,
-                    },
-                ],
-            )
+            return UseCaseResponse(success=True, data=response.data, code=self.code)
 
         logger.error(f"Erro ao realizar a transferência: {response.error}")
         return UseCaseResponse(
             success=False,
+            code=self.code,
             data={},
-            notification=[{"presenter_hint": response.error}],
+            error_code=response.error,
         )
 
     def _parse_args(self) -> dict | bool:
         # Verificar se os argumentos estão corretos
-        if len(self.input.args) < 3:
-            logger.error(f"Argumentos insuficientes para o comando: {self.input.args}")
-            return False, MSG.TRANSFER_WRONG_PARAMS
+        if len(self.args) < 4:
+            logger.error(f"Argumentos insuficientes para o comando: {self.args}")
+            return {}
 
         # Extrair o usuário de destino
-        to_user = self.input.args[1]
+        to_user = self.args[1]
         if not to_user.startswith("<@") or not to_user.endswith(">"):
             logger.error(f"Formato inválido para o usuário de destino: {to_user}")
-            return False, MSG.TRANSFER_WRONG_PARAMS
+            return {}
 
         # Extrair o valor
         try:
-            int(self.input.args[2])
+            int(self.args[2])
         except ValueError:
-            logger.error(f"Valor inválido para transferência: {self.input.args[2]}")
-            return False, MSG.TRANSFER_WRONG_PARAMS
+            logger.error(f"Valor inválido para transferência: {self.args[2]}")
+            return {}
 
         # Extrair a descrição
-        description = self.input.args[3]
+        description = self.args[3]
         if len(description) <= 0:
             logger.error(f"Formato inválido para a descrição: {description} ")
-            return False, MSG.TRANSFER_WRONG_PARAMS
+            return {}
 
-        return True, {
+        return {
             "to_slack_id": to_user[2:-1],
-            "value": int(self.input.args[2]),
+            "value": int(self.args[2]),
             "description": description,
         }

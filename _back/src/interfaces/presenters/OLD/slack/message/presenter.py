@@ -2,10 +2,10 @@ from enum import Enum
 
 from loguru import logger
 
-from interfaces.presenters.hints import DebriefingHints, FabbankHints, FabzendaHints
-from interfaces.presenters.slack.message.debriefing import DebriefingSlackPresenter
-from interfaces.presenters.slack.message.fabbank import FabbankSlackPresenter
-from interfaces.presenters.slack.message.fabzenda import FabzendaSlackPresenter
+from interfaces.presenters.OLD.hints import DebriefingHints, FabbankHints, FabzendaHints
+from interfaces.presenters.OLD.slack.message.debriefing import DebriefingSlackPresenter
+from interfaces.presenters.OLD.slack.message.fabbank import FabbankSlackPresenter
+from interfaces.presenters.OLD.slack.message.fabzenda import FabzendaSlackPresenter
 
 
 class MessagePresenter:

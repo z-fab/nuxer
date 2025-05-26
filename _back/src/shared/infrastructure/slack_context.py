@@ -67,12 +67,14 @@ class SlackContext:
             bool: True if the message was sent successfully, False otherwise.
         """
         try:
-            self.__app.client.chat_postMessage(channel=channel_id, thread_ts=thread_ts, blocks=blocks, text=alt_text)
+            response = self.__app.client.chat_postMessage(
+                channel=channel_id, thread_ts=thread_ts, blocks=blocks, text=alt_text
+            )
             logger.debug(f"Message sent to {channel_id}:\n{blocks}")
-            return True
+            return response
         except Exception as e:
             logger.error(f"ERROR SENDING MESSAGE TO {channel_id}:\n{e}")
-            return False
+            return {"ok": False}
 
     def __send_file(
         self,
@@ -116,25 +118,35 @@ class SlackContext:
         if settings.ENV == "dev":
             id_channel = CONST_SLACK.ID_CHANNEL_DEV
 
-        blocks = text_to_blocks(text)
-        blocks_str = json.dumps(blocks)
+        # blocks = text_to_blocks(text)
+        # blocks_str = json.dumps(blocks)
+        blocks_str = text
+        blocks = text_to_blocks(blocks_str)
+
+        blocks_send = 0
+        current_ts = thread_ts
+        while blocks_send < len(blocks):
+            sliced_blocks = json.dumps(blocks[blocks_send : blocks_send + 49])
+            response = self.__chat_postMessage(id_channel, sliced_blocks, alt_text, current_ts)
+            current_ts = response.get("ts")
+            blocks_send += 49
 
         if files_info:
-            self.__chat_postMessage(id_channel, blocks_str, alt_text, thread_ts)
-            return self.__send_file(
+            self.__send_file(
                 channel_id=id_channel,
                 files_info=files_info,
                 blocks="",
                 thread_ts=thread_ts,
             )
-        else:
-            return self.__chat_postMessage(id_channel, blocks_str, alt_text, thread_ts)
+
+        return response
 
     def send_dm(
         self,
         user: str,
         text: str,
         alt_text: str = "Há uma nova mensagem",
+        thread_ts: str = None,
         files_info: list[dict] = None,
     ):
         if settings.ENV == "dev":
@@ -145,20 +157,27 @@ class SlackContext:
         result = self.__app.client.conversations_open(users=id_user)
 
         if result["ok"]:
-            blocks = text_to_blocks(text)
-            blocks_str = json.dumps(blocks)
+            blocks_str = text
             id_channel = result["channel"]["id"]
+            blocks = text_to_blocks(blocks_str)
+
+            blocks_send = 0
+            current_ts = thread_ts
+            while blocks_send < len(blocks):
+                sliced_blocks = json.dumps(blocks[blocks_send : blocks_send + 49])
+                response = self.__chat_postMessage(id_channel, sliced_blocks, alt_text, current_ts)
+                current_ts = response.get("ts")
+                blocks_send += 49
 
             if files_info:
-                self.__chat_postMessage(id_channel, blocks_str, alt_text)
-                return self.__send_file(
+                self.__send_file(
                     channel_id=id_channel,
                     files_info=files_info,
                     blocks="",
-                    thread_ts=None,
+                    thread_ts=thread_ts,
                 )
-            else:
-                return self.__chat_postMessage(id_channel, blocks_str, alt_text)
+
+            return response
 
     def open_view(self, trigger_id: str, view: dict):
         try:
@@ -166,6 +185,14 @@ class SlackContext:
             return True
         except Exception as e:
             logger.error(f"ERROR OPENING VIEW:\n{e}")
+            return False
+
+    def update_view(self, view_id: str, view: dict):
+        try:
+            self.__app.client.views_update(view_id=view_id, view=view)
+            return True
+        except Exception as e:
+            logger.error(f"ERROR UPDATING VIEW:\n{e}")
             return False
 
 

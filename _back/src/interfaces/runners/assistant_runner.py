@@ -4,8 +4,7 @@ from loguru import logger
 from slack_bolt import Assistant, BoltContext, Say, SetSuggestedPrompts
 from slack_sdk import WebClient
 
-from interfaces.handlers.slack.action_handler import handle_action_event
-from interfaces.handlers.slack.message_handler import handle_message_event
+from interfaces.handlers.slack_handler import handle_slack_event
 from shared.infrastructure.slack_context import SlackContext
 
 # from slack_sdk import WebClient
@@ -28,12 +27,13 @@ def messages(body, say, context: BoltContext):
 
 
 @app_slack.event("app_mention")
-def messages(body, say, context: BoltContext):  # noqa: F811
+def messages(body, say, context: BoltContext, client: WebClient):  # noqa: F811
     last_message = body.get("event", {}).get("text", "")
     last_message = re.sub(r"^\s*<@[^>]+>\s*", "", last_message)
 
     try:
-        return handle_message_event(context, body.get("event", {}))
+        # return handle_message_event(context, body.get("event", {}))
+        return handle_slack_event(context, client, body.get("event", {}))
 
     except Exception as e:
         logger.exception(f"Failed to respond to an inquiry: {e}")
@@ -44,7 +44,8 @@ def messages(body, say, context: BoltContext):  # noqa: F811
 def action_handler(body, ack, say, context: BoltContext, client: WebClient):
     ack()
     try:
-        return handle_action_event(body, client)
+        # return handle_action_event(body, client)
+        return handle_slack_event(context, client, body)
 
     except Exception as e:
         logger.exception(f"Failed to respond to an inquiry: {e}")
@@ -73,10 +74,12 @@ def start_assistant_thread(say: Say, set_suggested_prompts: SetSuggestedPrompts)
 def respond_in_assistant_thread(
     payload: dict,
     context: BoltContext,
+    client: WebClient,
     say: Say,
 ):
     try:
-        handle_message_event(context, payload)
+        # handle_message_event(context, payload)
+        return handle_slack_event(context, client, payload)
     except Exception as e:
         logger.exception(f"Failed to respond to an inquiry: {e}")
         say(":warning: Desculpe, algo deu errado nos meus bits e bytes :robot_face:")

@@ -2,7 +2,7 @@ from domains.debriefing.repositories.debriefing import DebriefingRepository
 from domains.debriefing.types.status import DebriefingStatus
 from domains.fabbank.services.transaction import TransactionService
 from domains.user.entities.user import UserEntity
-from interfaces.presenters.hints import DebriefingHints
+from interfaces.presenters.OLD.hints import DebriefingHints
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 

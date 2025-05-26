@@ -1,9 +1,9 @@
-from enum import Enum
-
 from pydantic import BaseModel
+
+from shared.dto.error_code import ErrorCode
 
 
 class ServiceResponse(BaseModel):
     success: bool
-    error: str | Enum | None = None
+    error: ErrorCode = None
     data: dict | None = None

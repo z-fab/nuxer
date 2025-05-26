@@ -2,10 +2,10 @@ from enum import Enum
 
 from loguru import logger
 
-from interfaces.presenters.hints import DebriefingHints, FabbankHints, FabzendaHints
-from interfaces.presenters.slack.view.debriefing import DebriefingSlackPresenter
-from interfaces.presenters.slack.view.fabbank import FabbankSlackPresenter
-from interfaces.presenters.slack.view.fabzenda import FabzendaSlackPresenter
+from interfaces.presenters.OLD.hints import DebriefingHints, FabbankHints, FabzendaHints
+from interfaces.presenters.OLD.slack.view.debriefing import DebriefingSlackPresenter
+from interfaces.presenters.OLD.slack.view.fabbank import FabbankSlackPresenter
+from interfaces.presenters.OLD.slack.view.fabzenda import FabzendaSlackPresenter
 
 
 class ViewPresenter:
@@ -64,6 +64,7 @@ class ViewPresenter:
             FabzendaHints.ABDUCTION_SUCCESS: self.fabzenda.abduzir_animal,
             ###########
             DebriefingHints.DEBRIEFING_VALIDATION_SUCCESS: self.debriefing.debriefing_validation_success,
+            DebriefingHints.DEBRIEFING_VALIDATION_SUCCESS_CHANNEL: self.debriefing.debriefing_validation_success_channel,
         }
 
     def render(self, data: dict, presenter_hint: Enum) -> str:

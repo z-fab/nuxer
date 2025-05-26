@@ -4,7 +4,7 @@ from loguru import logger
 from slack_sdk import WebClient
 
 from interfaces.handlers.slack.command_handler import handle_command
-from interfaces.presenters.slack.view.presenter import ViewPresenter
+from interfaces.presenters.OLD.slack.view.presenter import ViewPresenter
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.slack_context import slack

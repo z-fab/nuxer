@@ -2,8 +2,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from domains.fabzenda.services.lottery import LotteryService
 from domains.fabzenda.services.update_animal import UpdateAnimalService
-from interfaces.presenters.hints import FabzendaHints
-from interfaces.presenters.slack.message.presenter import MessagePresenter
+from interfaces.presenters.OLD.hints import FabzendaHints
+from interfaces.presenters.OLD.slack.message.presenter import MessagePresenter
 from shared.infrastructure.db_context import db
 from shared.infrastructure.slack_context import slack
 

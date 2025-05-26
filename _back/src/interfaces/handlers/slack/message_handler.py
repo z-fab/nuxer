@@ -6,7 +6,7 @@ from loguru import logger
 from slack_bolt import BoltContext
 
 from interfaces.handlers.slack.command_handler import handle_command
-from interfaces.presenters.slack.message.presenter import MessagePresenter
+from interfaces.presenters.OLD.slack.message.presenter import MessagePresenter
 from shared.dto.slack_command_input import SlackCommandInput
 from shared.infrastructure.slack_context import slack
 from shared.utils.slack_utils import extract_command, text_to_blocks
