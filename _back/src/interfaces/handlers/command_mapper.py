@@ -1,32 +1,33 @@
 from loguru import logger
 
-from shared.dto.use_case_code import FabbankUseCaseCode
+from shared.dto.use_case_code import FabbankUseCaseCode, FabzendaUseCaseCode
 from shared.dto.use_case_request import UseCaseRequest
 
 MAP_COMMAND_USECASECODE = {
     ## Fabbank
     ("fb", "fabbank"): {
-        "": FabbankUseCaseCode.OPTIONS,
         "saldo": FabbankUseCaseCode.SALDO,
         ("transferir", "pix"): FabbankUseCaseCode.TRANSFERENCIA,
         ("change", "alterar"): FabbankUseCaseCode.ALTERAR_SALDO,
-        ("loja", "ver_loja"): FabbankUseCaseCode.LOJA,
+        "loja": FabbankUseCaseCode.OPTION_LOJA,
+        "ver_loja": FabbankUseCaseCode.LOJA,
         "comprar": FabbankUseCaseCode.LOJA_COMPRAR_ITEM,
     },
     # ## Fabzenda
-    # ("fz", "fabzenda"): {
-    #     "ver": UseCaseCode.FABZENDA_VER_FAZENDA,
-    #     "celeiro": UseCaseCode.FABZENDA_VER_CELEIRO,
-    #     "store": UseCaseCode.FABZENDA_VER_STORE,
-    #     "detalhe_item_store": UseCaseCode.FABZENDA_STORE_DETALHE_ITEM,
-    #     "comprar_item": UseCaseCode.FABZENDA_STORE_COMPRAR_ITEM,
-    #     "detalhe_animal_celeiro": UseCaseCode.FABZENDA_CELEIRO_DETALHE_ANIMAL,
-    #     "comprar_animal": UseCaseCode.FABZENDA_CELEIRO_COMPRAR_ANIMAL,
-    #     "alimentar": UseCaseCode.FABZENDA_ALIMENTAR_ANIMAL,
-    #     "enterrar": UseCaseCode.FABZENDA_ENTERRAR_ANIMAL,
-    #     "abduzir": UseCaseCode.FABZENDA_ABDUZIR_ANIMAL,
-    #     "detalhe_animal_fabzenda": UseCaseCode.FABZENDA_FAZENDA_DETALHE_ANIMAL,
-    # },
+    ("fz", "fabzenda"): {
+        "": FabzendaUseCaseCode.OPTION,
+        "ver": FabzendaUseCaseCode.VER_FAZENDA,
+        "detalhe_animal_fabzenda": FabzendaUseCaseCode.FAZENDA_DETALHE_ANIMAL,
+        "alimentar": FabzendaUseCaseCode.ALIMENTAR_ANIMAL,
+        "abduzir": FabzendaUseCaseCode.ABDUZIR_ANIMAL,
+        "enterrar": FabzendaUseCaseCode.ENTERRAR_ANIMAL,
+        "celeiro": FabzendaUseCaseCode.VER_CELEIRO,
+        "detalhe_animal_celeiro": FabzendaUseCaseCode.CELEIRO_DETALHE_ANIMAL,
+        "comprar_animal": FabzendaUseCaseCode.CELEIRO_COMPRAR_ANIMAL,
+        "store": FabzendaUseCaseCode.VER_STORE,
+        "detalhe_item_store": FabzendaUseCaseCode.STORE_DETALHE_ITEM,
+        "comprar_item": FabzendaUseCaseCode.STORE_COMPRAR_ITEM,
+    },
     # # Debriefing
     # ("db", "debriefing"): {
     #     "ver_debriefing": UseCaseCode.DEBRIEFING_NOTIFICAR,
@@ -61,5 +62,5 @@ def command_mapper(context_info: dict) -> UseCaseRequest | None:
                     source=context_info["source"], code=usecase_map.get("", None), payload=context_info
                 )
 
-    logger.warning(f"Comando não encontrado: {context_info.get('command')}")
+    logger.warning(f"Comando não encontrado: {context_info.get('command')} com args: {context_info.get('args', [])}")
     return None

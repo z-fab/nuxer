@@ -9,6 +9,10 @@ from ..base_presenter import BaseSlackPresenter
 
 class FabbankMessagePresenter(BaseSlackPresenter):
     ## Messages
+    _GENERIC_ERROR = """
+    Algo deu errado na minha comunicação com o Fabbank :warning:
+    : Tente novamente mais tarde ou entre em contato com o Fabs
+    """
 
     _LOJA_OPTIONS = """
     # Vendinha do Uxer 🛍️
@@ -139,9 +143,24 @@ class FabbankMessagePresenter(BaseSlackPresenter):
     : Para criar uma wallet fale com o Fabs
     """
 
+    TEMPLATE_FABBANK_EXTRACT = """
+    # Extrato FabBank :moneybag:
+    {apelido}, aqui está o extrato da sua Wallet (ID {id_wallet}) em {data}:
+    > *Saldo atual*: `F₵ {balance}`
+    --
+    {extract}
+    """
+
+    TEMPLATE_FABBANK_EXTRACT_TRANSACTION = """
+    *{user_from}* (Wallet ID: {id_wallet_from}) transferiu `F₵ {amount}`
+    *Motivo:* {description}
+    : Transação realizada em {timestamp}
+    --
+    """
+
     ## Success Messages
 
-    def options(self, data: dict):
+    def option_loja(self, data: dict):
         return self._say(self._LOJA_OPTIONS)
 
     def consultar_saldo_sucesso(self, data: dict):
@@ -292,12 +311,7 @@ class FabbankMessagePresenter(BaseSlackPresenter):
     ## Error Messages
 
     def error_generic(self, data: dict):
-        GENERIC_ERROR = """
-        Algo deu errado na minha comunicação com o Fabbank :warning:
-        : Tente novamente mais tarde ou entre em contato com o Fabs
-        """
-
-        self._say(GENERIC_ERROR)
+        self._say(self._GENERIC_ERROR)
 
     def error_wallet_not_found(self, data: dict):
         self._say(self._WALLET_NOT_FOUND)

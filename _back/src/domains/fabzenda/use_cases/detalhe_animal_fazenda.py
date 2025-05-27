@@ -1,29 +1,25 @@
 from loguru import logger
 
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
-from interfaces.presenters.OLD.hints import FabzendaHints
-from shared.dto.slack_command_input import SlackCommandInput
+from shared.dto.error_code import FabzendaError
+from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
 
 class DetalheAnimalFazenda:
-    def __init__(self, input_data: SlackCommandInput):
-        self.input = input_data
+    def __init__(self, ucr: UseCaseRequest):
+        self.user_id = ucr.payload.get("user_id", None)
+        self.args = ucr.payload.get("args", None)
+        self.code = ucr.code
 
     def __call__(self) -> UseCaseResponse:
         user_animal_repository = UserAnimalRepository(db)
-        user_animal = user_animal_repository.get_user_animal_by_id(self.input.args[1])
+        user_animal = user_animal_repository.get_user_animal_by_id(self.args[1])
 
         if not user_animal:
-            logger.error(f"[Detalhe Animal] Animal não encontrado: {self.input.args[1]}")
-            return UseCaseResponse(success=False)
+            logger.error(f"[Detalhe Animal] Animal não encontrado: {self.args[1]}")
+            return UseCaseResponse(success=False, code=self.code, error_code=FabzendaError.GENERIC_ERROR)
 
         logger.info(f"[Detalhe Animal] {user_animal}")
-        return UseCaseResponse(
-            success=True,
-            data={"user_animal": user_animal},
-            notification=[
-                {"presenter_hint": FabzendaHints.FAZENDA_OVERVIEW_DETALHE_ANIMAL},
-            ],
-        )
+        return UseCaseResponse(success=True, data={"user_animal": user_animal}, code=self.code)

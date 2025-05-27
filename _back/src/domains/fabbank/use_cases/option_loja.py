@@ -2,7 +2,7 @@ from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
 
 
-class Options:
+class OptionLoja:
     def __init__(self, ucr: UseCaseRequest):
         self.code = ucr.code
 

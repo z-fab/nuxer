@@ -4,22 +4,24 @@ from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.user_animal import UserAnimalRepository
 from domains.fabzenda.services.user_animal import UserAnimalService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.OLD.hints import FabzendaHints
-from shared.dto.slack_command_input import SlackCommandInput
+from shared.dto.error_code import FabzendaError
+from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
 
 class AlimentarAnimal:
-    def __init__(self, input_data: SlackCommandInput):
-        self.input = input_data
+    def __init__(self, ucr: UseCaseRequest):
+        self.user_id = ucr.payload.get("user_id", None)
+        self.args = ucr.payload.get("args", None)
+        self.code = ucr.code
 
     def __call__(self) -> UseCaseResponse:
         user_repository = UserRepository(db)
-        user = user_repository.get_user_by_slack_id(self.input.user_id)
+        user = user_repository.get_user_by_slack_id(self.user_id)
 
         user_animal_repository = UserAnimalRepository(db)
-        user_animal = user_animal_repository.get_user_animal_by_id(self.input.args[1])
+        user_animal = user_animal_repository.get_user_animal_by_id(self.args[1])
 
         user_animal_service = UserAnimalService(db)
 
@@ -29,11 +31,7 @@ class AlimentarAnimal:
         if not response_can_feed.success:
             logger.error(f"[Alimentar Animal] Erro ao alimentar animal: {response_can_feed}")
             return UseCaseResponse(
-                success=False,
-                data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": response_can_feed.error},
-                ],
+                success=False, code=self.code, error_code=response_can_feed.error, data={"apelido": user.apelido}
             )
 
         # Removendo o dinheiro da conta do usuário
@@ -48,10 +46,9 @@ class AlimentarAnimal:
             logger.error(f"[Alimentar Animal] Erro ao alimentar animal: {transaction_service}")
             return UseCaseResponse(
                 success=False,
+                code=self.code,
+                error_code=FabzendaError.FEED_TRANSACTION_ERROR,
                 data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": FabzendaHints.FEED_TRANSACTION_ERROR},
-                ],
             )
 
         # Atualizar o status do animal alimentado
@@ -60,19 +57,9 @@ class AlimentarAnimal:
         if not service_response.success:
             logger.error(f"[Alimentar Animal] Erro ao alimentar animal: {service_response}")
             return UseCaseResponse(
-                success=False,
-                data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": service_response.error},
-                ],
+                success=False, code=self.code, error_code=service_response.error, data={"apelido": user.apelido}
             )
 
         service_response.data["apelido"] = user.apelido
         logger.info(f"[Alimentar Animal] {service_response.data}")
-        return UseCaseResponse(
-            success=True,
-            data=service_response.data,
-            notification=[
-                {"presenter_hint": FabzendaHints.FEED_SUCCESS},
-            ],
-        )
+        return UseCaseResponse(success=True, code=self.code, data=service_response.data)

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class FabbankUseCaseCode(Enum):
-    OPTIONS = "FABBANK_OPTIONS"
+    OPTION_LOJA = "FABBANK_OPTION_LOJA"
     SALDO = "FABBANK_SALDO"
     TRANSFERENCIA = "FABBANK_TRANSFERENCIA"
     LOJA = "FABBANK_LOJA"
@@ -11,6 +11,7 @@ class FabbankUseCaseCode(Enum):
 
 
 class FabzendaUseCaseCode(Enum):
+    OPTION = "FABZENDA_OPTION"
     VER_FAZENDA = "FABZENDA_VER_FAZENDA"
     VER_CELEIRO = "FABZENDA_VER_CELEIRO"
     VER_STORE = "FABZENDA_VER_STORE"

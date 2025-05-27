@@ -4,22 +4,24 @@ from domains.fabbank.services.transaction import TransactionService
 from domains.fabzenda.repositories.item_definition import ItemDefinitionRepository
 from domains.fabzenda.services.item import ItemService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.OLD.hints import FabzendaHints
-from shared.dto.slack_command_input import SlackCommandInput
+from shared.dto.error_code import FabzendaError
+from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
 from shared.infrastructure.db_context import db
 
 
 class ComprarItem:
-    def __init__(self, input_data: SlackCommandInput):
-        self.input = input_data
+    def __init__(self, ucr: UseCaseRequest):
+        self.user_id = ucr.payload.get("user_id", None)
+        self.args = ucr.payload.get("args", None)
+        self.code = ucr.code
 
     def __call__(self) -> UseCaseResponse:
         user_repository = UserRepository(db)
-        user = user_repository.get_user_by_slack_id(self.input.user_id)
+        user = user_repository.get_user_by_slack_id(self.user_id)
 
         item_definition_repository = ItemDefinitionRepository(db)
-        item = item_definition_repository.get_item_definition_by_id(self.input.args[1])
+        item = item_definition_repository.get_item_definition_by_id(self.args[1])
 
         item_service = ItemService(db)
 
@@ -30,10 +32,9 @@ class ComprarItem:
             logger.error(f"[Comprar Item] Erro ao comprar item: {response_can_buy}")
             return UseCaseResponse(
                 success=False,
+                code=self.code,
                 data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": response_can_buy.error},
-                ],
+                error_code=response_can_buy.error,
             )
 
         # Removendo o dinheiro da conta do usuário
@@ -48,10 +49,9 @@ class ComprarItem:
             logger.error(f"[Comprar Item] Erro ao comprar item: {transaction_service}")
             return UseCaseResponse(
                 success=False,
+                code=self.code,
                 data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": FabzendaHints.STORE_TRANSACTION_ERROR},
-                ],
+                error_code=FabzendaError.CELEIRO_TRANSACTION_ERROR,
             )
 
         service_response = item_service._buy_item_entity(
@@ -63,18 +63,11 @@ class ComprarItem:
             logger.error(f"[Comprar Item] Erro ao comprar o item: {service_response}")
             return UseCaseResponse(
                 success=False,
+                code=self.code,
                 data={"apelido": user.apelido},
-                notification=[
-                    {"presenter_hint": service_response.error},
-                ],
+                error_code=service_response.error,
             )
 
         service_response.data["apelido"] = user.apelido
         logger.info(f"[Comprar Item] {service_response.data}")
-        return UseCaseResponse(
-            success=True,
-            data=service_response.data,
-            notification=[
-                {"presenter_hint": FabzendaHints.STORE_BUY_SUCCESS},
-            ],
-        )
+        return UseCaseResponse(success=True, code=self.code, data=service_response.data)

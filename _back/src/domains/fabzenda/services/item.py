@@ -5,7 +5,7 @@ from domains.fabzenda.repositories.item_definition import ItemDefinitionReposito
 from domains.fabzenda.services.animal_modifier import AnimalModifierService
 from domains.fabzenda.services.user_farm import UserFarmService
 from domains.user.repositories.user import UserRepository
-from interfaces.presenters.OLD.hints import FabzendaHints
+from shared.dto.error_code import FabzendaError
 from shared.dto.service_response import ServiceResponse
 from shared.infrastructure.db_context import DatabaseExternal
 
@@ -34,7 +34,7 @@ class ItemService:
         if not inventory_item:
             return ServiceResponse(
                 success=False,
-                error=FabzendaHints.STORE_BUY_ERROR,
+                error=FabzendaError.STORE_BUY_ERROR,
             )
 
         return ServiceResponse(
@@ -54,14 +54,14 @@ class ItemService:
         if int(wallet.balance) < item.price:
             return ServiceResponse(
                 success=False,
-                error=FabzendaHints.STORE_INSUFFICIENT_BALANCE,
+                error=FabzendaError.STORE_INSUFFICIENT_BALANCE,
             )
 
         # Verificando se o item está disponível
         if not item.available:
             return ServiceResponse(
                 success=False,
-                error=FabzendaHints.STORE_ITEM_UNAVAILABLE,
+                error=FabzendaError.STORE_ITEM_NOT_AVAILABLE,
             )
 
         return ServiceResponse(success=True, data={"item_definition": item})

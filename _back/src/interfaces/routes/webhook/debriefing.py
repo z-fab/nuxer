@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, Request
 
 from domains.debriefing.use_cases.notificar_debriefing import NotificarDebriefing
 from interfaces.routes.auth.dependencies import admin_role
-from shared.utils.slack_notifier import slack_notifier
+
+# from shared.utils.slack_notifier import slack_notifier
 
 router = APIRouter(
     prefix="/wh/db",
@@ -18,6 +19,6 @@ async def notificar(request: Request, user: dict = Depends(admin_role)):
     debriefing_id = body_json.get("data", {}).get("id")
 
     use_case_response = NotificarDebriefing(debriefing_id)()
-    slack_notifier(use_case_response)
+    # slack_notifier(use_case_response)
 
     return {"message": "Debriefing notificado com sucesso!"}
