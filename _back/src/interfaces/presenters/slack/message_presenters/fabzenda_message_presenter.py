@@ -309,9 +309,14 @@ class FabzendaMessagePresenter(BaseSlackPresenter):
 
     > O que esse item faz?
     {effect_str}
+    SELECT<Fabichinho(user_animal_id)[{user_animal_list}]>
     .
     <💳 Comprar(fabzenda)[opt=comprar_item,id={id}]P> <🏪 Voltar para Store(fabzenda)[opt=store]>
     """
+
+    # Selecione o fabichinho que receberá esse item
+    # SELECT<Fabichinho(manage_action)[Editar=edit_value,Ler=read_value,Salvar=save_value]>
+    # <💳 Comprar(fabzenda)[opt=comprar_item,id={id}]P>
 
     _STORE_BUY_SUCCESS = """
     {apelido}, você comprou um item para sua Fabzenda!
@@ -604,6 +609,13 @@ class FabzendaMessagePresenter(BaseSlackPresenter):
 
     def store_detalhe_item(self, data: dict):
         item: ItemDefinitionEntity = data.get("item", {})
+        user_animal_list = data.get("user_animal_list", [])
+
+        options_user_animals = [
+            f"{animal.animal_type.emoji} {animal.name}={animal.animal_id}" for animal in user_animal_list
+        ]
+        user_animal_list_str = ",".join(options_user_animals)
+
         self._set_view(
             content=self._STORE_ITEM_DETAIL.format(
                 id=item.item_id,
@@ -612,6 +624,7 @@ class FabzendaMessagePresenter(BaseSlackPresenter):
                 price=item.price,
                 description=item.description,
                 effect_str=item.effect_str,
+                user_animal_list=user_animal_list_str,
             ),
             title="Oinc Store 🏪",
         )

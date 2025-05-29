@@ -14,9 +14,14 @@ class ItemDefinitionORM(Base):
     price = Column(Integer, nullable=False)
     description = Column(Text, nullable=True)
     effect_type = Column(
-        Enum("STATE_CHANGE", "MULTIPLIER", name="effect_type_enum"),
+        Enum("EQUIP", "CONSUMABLE", name="effect_type_enum"),
         nullable=False,
-        server_default=text("'STATE_CHANGE'"),
+        server_default=text("'EQUIP'"),
+    )
+    item_target = Column(
+        Enum("FARM", "ANIMAL", name="item_target_enum"),
+        nullable=False,
+        server_default=text("'ANIMAL'"),
     )
     effect = Column(JSON)
     duration = Column(Integer, nullable=True)

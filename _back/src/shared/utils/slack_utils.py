@@ -18,113 +18,167 @@ def extract_command(text):
     return command.lower(), params
 
 
+def _parse_select_options(options_str: str) -> list:
+    """Converte a string de opções de um select para o formato de lista de dicionários."""
+    options = []
+    if options_str:
+        for option_pair in options_str.split(","):
+            text_val = option_pair.split("=")
+            if len(text_val) == 2:
+                options.append(
+                    {
+                        "text": {"type": "plain_text", "text": text_val[0].strip(), "emoji": True},
+                        "value": text_val[1].strip(),
+                    }
+                )
+            else:
+                # Log ou tratamento para opção malformada, se necessário
+                print(f"Aviso: Par de opção de select malformado ignorado: '{option_pair}'")
+    return options
+
+
+def _parse_button_params(params_str: str | None) -> str | None:
+    """Converte a string de parâmetros de um botão para JSON string."""
+    if params_str:
+        params = dict(param.split("=") for param in params_str.split(","))
+        return json.dumps(params)
+    return None
+
+
+def _create_button_element(label: str, action_id: str, params_str: str | None, style_char: str | None) -> dict:
+    """Cria a estrutura de um elemento de botão."""
+    button = {
+        "type": "button",
+        "text": {"type": "plain_text", "text": label, "emoji": True},
+        "action_id": action_id,
+    }
+    button_value = _parse_button_params(params_str)
+    if button_value:
+        button["value"] = button_value
+
+    if style_char == "P":
+        button["style"] = "primary"
+    elif style_char == "D":
+        button["style"] = "danger"
+    return button
+
+
+def _create_static_select_element(placeholder: str, action_id: str, options_str: str) -> dict:
+    """Cria a estrutura de um elemento static_select."""
+    return {
+        "type": "static_select",
+        "placeholder": {"type": "plain_text", "text": placeholder, "emoji": True},
+        "action_id": action_id,
+        "options": _parse_select_options(options_str),
+    }
+
+
 def text_to_blocks(text: str) -> list:
+    """
+    Converte uma string de texto formatada em uma lista de blocos Slack.
+    Suporta: dividers, headers, context, sections com texto, botões, selects e imagens.
+    """
     blocks = []
-    for line in text.splitlines():
-        line = line.strip()
+    for line_number, raw_line in enumerate(text.splitlines(), 1):
+        line = raw_line.strip()
         struct = {}
 
-        if re.match(r"^--$", line):
-            # Divider
+        # 1. Divider (--)
+        if re.fullmatch(r"--", line):
             struct = {"type": "divider"}
-        elif header_match := re.match(r"^#\s*(.*)$", line):
-            # Header
+
+        # 2. Header (# Texto do Header)
+        elif header_match := re.fullmatch(r"#\s*(.*)", line):
             struct = {
                 "type": "header",
-                "text": {"type": "plain_text", "text": header_match.group(1)},
+                "text": {"type": "plain_text", "text": header_match.group(1).strip(), "emoji": True},
             }
-        elif context_match := re.match(r"^:\s*(.*)$", line):
-            # Context
-            context_content = context_match.group(1)
-            # Split by <img ...> and keep the delimiters
-            parts = re.split(r"(<img\s+[^>]+>)", context_content)
+
+        # 3. Context (: Texto do Contexto <img url>)
+        elif context_match := re.fullmatch(r":\s*(.*)", line):
+            context_content = context_match.group(1).strip()
             elements = []
+            # Divide o conteúdo mantendo os delimitadores de imagem
+            parts = re.split(r"(<img\s+[^>]+>)", context_content)
             for part in parts:
-                img_match = re.match(r"<img\s+([^>]+)>", part)
-                if img_match:
-                    img_url = img_match.group(1).strip()
+                img_tag_match = re.fullmatch(r"<img\s+([^>]+)>", part.strip())
+                if img_tag_match:
+                    img_url = img_tag_match.group(1).strip()
                     elements.append({"type": "image", "image_url": img_url, "alt_text": "imagem"})
-                elif part.strip():
+                elif part.strip():  # Adiciona texto apenas se não for vazio
                     elements.append({"type": "mrkdwn", "text": part.strip()})
-            struct = {
-                "type": "context",
-                "elements": elements,
-            }
-        # Nova condição para linhas com o formato "texto || <botão>"
-        elif section_button_match := re.match(r"^(.*?)\s*\|\|\s*<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>$", line):
-            # Section com botão como accessory
-            section_text = section_button_match.group(1).strip()
-            button_label = section_button_match.group(2)
-            action_id = section_button_match.group(3)
-            params_str = section_button_match.group(5) if section_button_match.group(5) else None
-            is_primary = section_button_match.group(6) == "P" if section_button_match.group(6) else False
-            is_danger = section_button_match.group(6) == "D" if section_button_match.group(6) else False
+            if elements:  # Adiciona o bloco de contexto apenas se houver elementos
+                struct = {"type": "context", "elements": elements}
 
-            button = {
-                "type": "button",
-                "text": {"type": "plain_text", "text": button_label},
-                "action_id": action_id,
-            }
+        # 4. Section com Accessory (Texto || <Botão> ou Texto || SELECT<...> ou Texto || <img ...>)
+        elif accessory_line_match := re.fullmatch(r"(.*?)\s*\|\|\s*(.+)", line):
+            section_text_content = accessory_line_match.group(1).strip()
+            accessory_content_str = accessory_line_match.group(2).strip()
+            accessory_obj = None
 
-            if params_str:
-                params = dict(param.split("=") for param in params_str.split(","))
-                button["value"] = json.dumps(params)
+            # 4a. Botão como Accessory: <label(action_id)[params]P/D>
+            if btn_accessory_match := re.fullmatch(
+                r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?([PD]?)>", accessory_content_str
+            ):
+                label, action_id, _, params_str, style_char = btn_accessory_match.groups()
+                accessory_obj = _create_button_element(label, action_id, params_str, style_char)
 
-            if is_primary:
-                button["style"] = "primary"
-            elif is_danger:
-                button["style"] = "danger"
+            # 4b. Imagem como Accessory: <img url>
+            elif img_accessory_match := re.fullmatch(r"<img\s+([^>]+)>", accessory_content_str):
+                img_url = img_accessory_match.group(1).strip()
+                accessory_obj = {"type": "image", "image_url": img_url, "alt_text": "imagem"}
 
-            struct = {"type": "section", "text": {"type": "mrkdwn", "text": section_text}, "accessory": button}
-        # Nova condição para linhas com o formato "texto || <img URL>"
-        elif section_img_match := re.match(r"^(.*?)\s*\|\|\s*<img\s+(.+)>$", line):
-            section_text = section_img_match.group(1).strip()
-            img_url = section_img_match.group(2).strip()
-            struct = {
-                "type": "section",
-                "text": {"type": "mrkdwn", "text": section_text},
-                "accessory": {"type": "image", "image_url": img_url, "alt_text": "imagem"},
-            }
-        elif re.search(r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>", line):
-            # Buttons <label(action_id)[params]P> - multiple allowed in one line, P for primary style
-            button_matches = re.findall(r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?(P|D)?>", line)
-            buttons = []
+            # 4c. Select como Accessory: SELECT<Placeholder(action_id)[options]>
+            elif select_accessory_match := re.fullmatch(
+                r"SELECT<([^)]+)\(([^)]+)\)\[([^\]]+)\]>", accessory_content_str
+            ):
+                placeholder, action_id, options_str = select_accessory_match.groups()
+                accessory_obj = _create_static_select_element(placeholder, action_id, options_str)
 
-            for i, match in enumerate(button_matches):
-                label = match[0]
-                action_id = match[1]
-                params_str = match[3] if len(match) > 2 and match[3] else None
-                is_primary = match[4] == "P" if len(match) > 4 else False
-                is_danger = match[4] == "D" if len(match) > 4 else False
-
-                button = {
-                    "type": "button",
-                    "text": {"type": "plain_text", "text": label},
-                    "action_id": f"{action_id}_{i}",
+            if accessory_obj:
+                struct = {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": section_text_content if section_text_content else " "},
+                    "accessory": accessory_obj,
                 }
+            else:  # Fallback: se o acessório não for reconhecido, trata a linha inteira como texto
+                struct = {"type": "section", "text": {"type": "mrkdwn", "text": line}}
 
-                if params_str:
-                    params = dict(param.split("=") for param in params_str.split(","))
-                    button["value"] = json.dumps(params)
+        # 5. Standalone Select (SELECT<Placeholder(action_id)[options]>)
+        elif standalone_select_match := re.fullmatch(r"SELECT<([^)]+)\(([^)]+)\)\[([^\]]+)\]>", line):
+            placeholder, action_id, options_str = standalone_select_match.groups()
+            struct = {
+                "type": "actions",
+                "elements": [_create_static_select_element(placeholder, action_id, options_str)],
+            }
 
-                if is_primary:
-                    button["style"] = "primary"
-                elif is_danger:
-                    button["style"] = "danger"
+        # 6. Standalone Buttons (<label(action_id)[params]P/D> ...)
+        # Esta regex garante que a linha inteira seja composta por um ou mais botões.
+        elif re.fullmatch(r"(\s*<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?([PD]?)>\s*)+", line):
+            # Encontra todos os botões individuais na linha
+            button_captures = re.findall(r"<([^(]+)\(([^)]+)\)(\[([^\]]+)\])?([PD]?)>", line)
+            buttons_elements = []
+            for i, capture in enumerate(button_captures):
+                label, action_id, _, params_str, style_char = capture
+                # Garante um action_id único se houver múltiplos botões, embora o action_id original já deva ser único.
+                # Se a intenção é que o action_id seja o mesmo para todos os botões na linha de actions, remova o _i.
+                buttons_elements.append(_create_button_element(label, f"{action_id}_{i}", params_str, style_char))
 
-                buttons.append(button)
+            if buttons_elements:
+                struct = {"type": "actions", "elements": buttons_elements}
 
-            struct = {"type": "actions", "elements": buttons}
-
+        # 7. Linha de placeholder para espaço (.)
         elif line == ".":
             struct = {"type": "section", "text": {"type": "mrkdwn", "text": " "}}
 
-        elif line:
-            # Section (for non-empty lines)
+        # 8. Linha de texto comum (Section)
+        elif line:  # Se a linha não estiver vazia e não corresponder a nenhum padrão anterior
             struct = {"type": "section", "text": {"type": "mrkdwn", "text": line}}
 
         if struct:
             blocks.append(struct)
+        elif line:  # Se a linha não foi processada mas não está vazia, logar um aviso
+            print(f"Aviso: Linha {line_number} não reconhecida e ignorada: '{raw_line}'")
 
     return blocks
 

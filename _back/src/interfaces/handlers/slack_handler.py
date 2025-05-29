@@ -42,10 +42,25 @@ def _extract_action_info(payload: dict) -> dict:
 
     actions = payload.get("actions", [])
     actions = actions[0] if len(actions) > 0 else {}
+    actions_type = actions.get("type", "")
 
-    command = actions.get("action_id", "").split("_")[0]
-    args = json.loads(actions.get("value", "{}")).values()
-    args = list(args)
+    command = None
+    args = {}
+    if actions_type == "button":
+        command = actions.get("action_id", "").split("_")[0]
+        args_action = json.loads(actions.get("value", "{}")).values()
+        args_action = list(args_action)
+        args = dict(enumerate(args_action))
+
+        # Extraindo informações de selects na view
+        states = payload.get("view", {}).get("state", {}).get("values", {})
+        for element in states.values():
+            for key, field in element.items():
+                # Verifica se o campo é um select estático
+                if field.get("type") == "static_select":
+                    args[key] = None
+                    if field.get("selected_option") is not None:
+                        args[key] = field.get("selected_option", {}).get("value", "")
 
     user_id = payload.get("user", {}).get("id", None)
     channel_id = payload.get("channel", {}).get("id", None)
@@ -58,6 +73,7 @@ def _extract_action_info(payload: dict) -> dict:
         "args": args,
         "user_id": user_id,
         "channel_id": channel_id,
+        "actions_type": actions_type,
     }
 
 
@@ -67,9 +83,11 @@ def handle_slack_event(context: BoltContext, web_client: WebClient, payload: dic
 
     if type_event == "message" or type_event == "app_mention":
         context_info = _extract_message_info(payload)
-
     else:
         context_info = _extract_action_info(payload)
+        if context_info.get("actions_type") != "button":
+            logger.debug(f"Tipo de ação não suportada: {context_info.get('actions_type')}")
+            return True
 
     context_info["source"] = "slack_" + type_event
 

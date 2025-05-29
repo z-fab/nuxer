@@ -1,6 +1,8 @@
 from loguru import logger
 
 from domains.fabzenda.repositories.item_definition import ItemDefinitionRepository
+from domains.fabzenda.services.user_animal import UserAnimalService
+from domains.user.repositories.user import UserRepository
 from shared.dto.error_code import FabzendaError
 from shared.dto.use_case_request import UseCaseRequest
 from shared.dto.use_case_response import UseCaseResponse
@@ -17,9 +19,17 @@ class DetalheItemStore:
         item_definition_repository = ItemDefinitionRepository(db)
         item = item_definition_repository.get_item_definition_by_id(self.args[1])
 
+        user_repository = UserRepository(db)
+        user_entity = user_repository.get_user_by_slack_id(self.user_id)
+
+        user_animal_service = UserAnimalService(db)
+        user_animal_list = user_animal_service.get_user_animals(user_entity.id)
+
         if not item:
             logger.error(f"[Detalhe Item Store] Definição de Item não encontrado: {self.args[1]}")
             return UseCaseResponse(success=False, code=self.code, error_code=FabzendaError.GENERIC_ERROR)
 
         logger.info(f"[Detalhe Item Store] {item}")
-        return UseCaseResponse(success=True, code=self.code, data={"item": item})
+        return UseCaseResponse(
+            success=True, code=self.code, data={"item": item, "user_animal_list": user_animal_list.data["user_animals"]}
+        )

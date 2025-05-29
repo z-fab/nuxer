@@ -36,6 +36,6 @@ class VerStore:
             data={
                 "items": items,
                 "balance": wallet.balance,
-                "atual_page": int(self.args[1]) if len(self.args) > 1 else 1,
+                "atual_page": int(self.args[1]) if (1 in self.args) else 1,
             },
         )
